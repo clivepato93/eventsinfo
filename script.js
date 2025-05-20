@@ -54,7 +54,9 @@ async function info() {
 			const content = await page.content()	
 	let $ = cheerio.load(content);
 // console.log($.html())
-const res = [...$("div:not([class])")];
+$ = cheerio.load($(".Matches__fixture").html())
+// console.log($.html())
+const res = [...$('div:not([class])')];
 // const res = [...$(".matches-component")];
 
 res.forEach((res,i)=>{
@@ -122,3 +124,34 @@ res.forEach((res,i)=>{
 }
 
 info();
+// valid result
+/*
+index is 1 
+                                        <div class="fixture-title" id="2512250">
+                                                <span><span>Wed 21 May</span><span class="screenreader">planned match</span></span><span>|</span><span>UEFA Europa League</span>
+                                        </div>
+                                        <div>
+                                                <div class="Matches__fixture">
+                                                        <div class="fixture-details" tabindex="0" aria-expanded="false">
+                                                                <div class="accord-btn">
+                                                                        <span><i class="icon-down"></i></span>
+                                                                </div>
+                                                                <ul>
+                                                                        <li class="first-team">
+                                                                                <span><img src="//assets.manutd.com/AssetPicker/images/0/0/11/180/767112/Tottenham_Hotspur_Crest_Comp_180x1801550155045146.png" alt="" title=""></span><span class="team__name">Spurs<span class="screenreader"> versus</span></span>
+                                                                        </li>
+                                                                        <li class="second-team">
+                                                                                <span><img src="//assets.manutd.com/AssetPicker/images/0/0/11/201/772402/Manchester_United_Crest_Comp_180x1801550591475296.png" alt="" title=""></span><span class="team__name manu-normal">Man Utd</span>
+                                                                        </li>
+                                                                        <li class="fixture-score">
+                                                                                <p>
+                                                                                        <span class="screenreader">time </span><span class="match">20:00</span>
+                                                                                </p>
+                                                                        </li>
+                                                                </ul>
+                                                                <p class="team-venue">San Mamés</p>
+                                                                <div class="fixture-channels"></div>
+                                                        </div>
+                                                </div>
+                                        </div>
+*/
