@@ -39,22 +39,16 @@ res.forEach((res,i)=>{
 const event = {
 date:$(res).find('.fixture-title>span span.screenreader').prev().text()
 }
-// const x = $(res).find('.fixture-title>span span.screenreader').prev()
-// console.log($(x).html())
-// x.forEach(res=>console.log($(res).html()))
-		console.log(event,`index is ${i+1}`,$(res).html())
+events.push(event)
+		console.log(`index is ${i+1}`, $(res).find('.first-team .team__name').text().replace(/[^\w0-9]{2,}/,' '),$(res).find('.second-team .team__name').text(),
+		// .replace(/[\n\t]/g,'')
+		$(res).html())
 	}
+	// console.log(events)
 })
-
-	// const content = await page.content();
-	//   console.log(content); // Or use cheerio/jQuery-like scraping here
-	// itemsList
-
-	// The convention in Cheerio is to prefix the variable name with a $ to indicate that it contains a Cheerio object. This is not required, but it is a good practice to follow.
-	//   const $ = cheerio.load(content)
-
 
 	await browser.close();
 }
 
 info();
+// console.log(events)
