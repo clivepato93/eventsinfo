@@ -31,18 +31,41 @@ async function info() {
 				// await page.waitForTimeout(5000)
 			const content = await page.content()	
 	let $ = cheerio.load(content);
-$ = cheerio.load($(".Matches__fixture").html())
+$ = cheerio.load($(".matches-component").html())
+
 const res = [...$('div:not([class])')];
 
 res.forEach((res,i)=>{
 	if($(res).find('.fixture-title').length && $(res).find(".team-venue").text()==='Old Trafford'){
-const event = {
-date:$(res).find('.fixture-title>span span.screenreader').prev().text()
-}
-events.push(event)
-		console.log(`index is ${i+1}`, $(res).find('.first-team .team__name').text().replace(/[^\w0-9]{2,}/,' '),$(res).find('.second-team .team__name').text(),
+		const todaysDate = new Date('2025-12-31');
+		const date = $(res).find('.fixture-title>span span.screenreader').prev().text();
+		const title = $(res).find('.first-team .team__name').text().replace(/[^\w0-9]{2,}/,' ')+' '+$(res).find('.second-team .team__name').text().trim();
+		const time = $(res).find('.match').text();
+
+		let year;
+		if(/Jan/i.test(date) && todaysDate.getMonth()==11){
+			year=todaysDate.getFullYear()+1
+		}
+		else{
+			year=todaysDate.getFullYear()
+		}
+
+		console.log({
+			date,title,time,year
+		})
+// const event = {
+// date:$(res).find('.fixture-title>span span.screenreader').prev().text(),
+// title:$(res).find('.first-team .team__name').text().replace(/[^\w0-9]{2,}/,' ')+' '+$(res).find('.second-team .team__name').text().trim(),
+// time:$(res).find('.match').text(),
+// year:new Date().getFullYear(),
+// }
+// events.push(event)
+
+		console.log(`index is ${i+1}`,
 		// .replace(/[\n\t]/g,'')
-		$(res).html())
+		// event,
+		// new Date(event.date)
+	)
 	}
 	// console.log(events)
 })
