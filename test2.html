@@ -1,0 +1,2938 @@
+<!-- https://tickets.manutd.com/en-GB/categories/home-tickets -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body class="body_css interface-1 dir-LTR screen-RecommendedEvents_aspx screen-recommendedevents_aspx template-TemplateFull template-templatefull header-v2 display-user-icon display-basket-icon display-basket-subtitles force-basket-assign-owner disable-renewal-price disable-print-confirmation enable-filter-spinner display-choose-seats-for-me display-remove-all desktop-ecrm-grid-as-cards display-next-event-icons display-sticky-basket-timer display-memberships-list display-subscriptions-list password-reset" aria-flowto="skipToContent" data-whatinput-formswitching="" data-hasqtip="1" data-whatinput="mouse"><button type="button" id="skipToContent" tabindex="0" aria-label="Skip to page content" aria-hidden="false" style="display: block;">Skip to page content</button><div id="tint-overlay" class="dialog-overlay" style="display: none;"></div>
+<div id="cookie-messages" class="cookie-policy-message" role="dialog" aria-labelledby="aboutCookieMesg" style="display: none;">
+  <div class="cookie-message__content">
+    <h2 id="aboutCookieMesg" tabindex="0">ABOUT COOKIES</h2>
+    <p>
+      To help make this website better, to improve and personalise your
+      experience and to show content we think you'll like we use non-essential
+      cookies and other technologies to do this.
+    </p>
+    <span>Are you happy to accept cookies?</span>
+  </div>
+  <div class="cookie-buttons">
+    <button class="black-btn-skew btn" id="settings-btn" onclick="rejectSettings()">
+      <span>Reject All</span>
+    </button>
+    <button class="red-btn-skew btn" id="accept-btn" onclick="acceptReqCookies()">
+      <span>Accept all</span>
+    </button>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function replaceWhite(x) {
+    let k = String(x).split(" ").join("_");
+    k.split("-").join("_")
+    return k;
+  }
+
+
+  if (document.cookie.split(';').some((item) => item.includes('userConsentCookiePolicy=on'))) {
+    console.log('> The cookie "userConsentCookiePolicy" has a value of "on"')
+
+    if (document.cookie.includes('g_uid')) {
+      console.log(`g-uid`);
+      const [gCookie] = document.cookie.split(';').filter(x => x.includes('g_uid'))
+      if (typeof gCookie == "string") {
+
+
+        console.log({ gCookie });
+        const gIdValue = gCookie.trim().slice(gCookie.indexOf('='))
+        console.log({ gIdValue });
+        if (window.digitalData) {
+          console.log('Digital Data Found');
+          window.digitalData.g_uid = gIdValue
+        } else {
+          console.log('Digital Data Not Found. Creating digitalData');
+          window.digitalData = { g_uid: gIdValue }
+        }
+      }
+    }
+
+    var arrayOfItems = [];
+    function fireTag(
+      el,
+      labelText,
+      name = "tickets",
+      category = "tickets",
+      price = "0"
+    ) {
+      var product =
+        ";" +
+        labelText +
+        ";;;;eVar18=" +
+        name +
+        "|eVar19=" +
+        price +
+        "|eVar23=" +
+        category;
+      window.digitalData.product.productView = product;
+    }
+
+    function fireProductImpression(
+      listOfItems = null,
+      categoryName = null,
+      brandName = null,
+      price = null
+    ) {
+      var prodString = "";
+      for (var i = 0; i < listOfItems.length; i++) {
+        var product =
+          ";" +
+          listOfItems[i].name +
+          ";;;;eVar18=" +
+          listOfItems[i].ID +
+          "|eVar19=" +
+          price +
+          "|eVar23=" +
+          categoryName;
+        prodString += product;
+      }
+      window.digitalData.product.productView = prodString;
+    }
+
+    setTimeout(function () {
+      $("#PH_CustomFooter > footer > div.sponsor ul > li a").click(function (
+        e
+      ) {
+        var thisURL = e.currentTarget.href ? e.currentTarget.href : "";
+        var thisPartnerName = e.currentTarget.dataset.partnerName
+          ? e.currentTarget.dataset.partnerName.toLowerCase()
+          : "";
+        var labelText = thisPartnerName ? thisPartnerName : "";
+        var desti = thisURL ? thisURL : "";
+        window.digitalData.page.pageInfo.desti_url = desti;
+        window.digitalData.page.pageInfo.desti_info = labelText;
+      });
+
+      $(".social-icons li a").click(function (e) {
+        var thisURL = e.currentTarget.href;
+        var desti = thisURL ? thisURL : "";
+        window.digitalData.page.pageInfo.social_desti = desti;
+      });
+    }, 500);
+
+    if ($eSRO.currentScreen == "giftvoucher.aspx") {
+      var folders = window.location.pathname;
+      var lastSegment = folders.split("/").pop();
+      var labelText = lastSegment.replace(/%20/g, "_");
+      fireTag("", labelText, labelText, "gift_voucher", "0");
+
+      $("#btnAddToBasket").click(function (e) {
+        var priceOf = $("#gvPrice").val();
+        var finalPriceOf = priceOf ? priceOf : "0";
+
+        fireTag(e, labelText, labelText, "gift_voucher", finalPriceOf);
+      });
+    } else if ($eSRO.currentScreen == "recommendedevents.aspx") {
+      var folders = window.location.pathname;
+      var lastSegment = folders.split("/").pop();
+      var categoryOf = "";
+      if (lastSegment.indexOf("Ballot") > -1) {
+        var categoryOf = "ballots";
+      } else if (lastSegment.indexOf("Tour") > -1) {
+        var categoryOf = "tours";
+      } else {
+        var categoryOf = "tickets";
+      }
+
+      setTimeout(function () {
+        if ($(".cards-wrapper.screen-content .cards .card").length) {
+          $(".cards")
+            .children(".card")
+            .each(function (i, e) {
+              var nameOf = $(this)
+                .find(".card-content h2")[0]
+                .innerHTML.toLowerCase()
+                .replace(/ /g, "_");
+              arrayOfItems.push({
+                name: nameOf ? nameOf : "",
+                ID: "",
+                dateTime: "",
+                competition: "",
+              });
+            });
+          fireProductImpression(arrayOfItems, categoryOf, "manutd", "");
+        }
+      }, 500);
+    } else if ($eSRO.currentScreen == "subscriptionlist.aspx") {
+      setTimeout(function () {
+        if ($(".cards-wrapper.screen-content .cards .card").length) {
+          $(".cards")
+            .children(".card")
+            .each(function (i, e) {
+              var nameOf = $(this)
+                .find(".card-content h2")[0]
+                .innerHTML.toLowerCase()
+                .replace(/ /g, "_");
+              arrayOfItems.push({
+                name: nameOf ? nameOf : "",
+                ID: "",
+                dateTime: "",
+                competition: "",
+              });
+            });
+          fireProductImpression(arrayOfItems, "season_tickets", "manutd", "");
+        }
+      }, 500);
+    } else if ($eSRO.currentScreen == "membershipslist.aspx") {
+      setTimeout(function () {
+        if ($(".itemsList .dataItem").length) {
+          $(".itemsList")
+            .children(".dataItem")
+            .each(function (i, e) {
+              var nameOf = $(this)
+                .data("name")
+                .toLowerCase()
+                .replace(/ /g, "_");
+              var IDOf = $(this).data("id") ? $(this).data("id") : "";
+
+              arrayOfItems.push({
+                name: nameOf ? nameOf : "",
+                ID: IDOf,
+                dateTime: "",
+                competition: "",
+              });
+            });
+          fireProductImpression(arrayOfItems, "memberships", "manutd", "");
+        }
+      }, 500);
+    } else if (
+      $eSRO.currentScreen == "hospitalityevents.aspx" ||
+      $eSRO.currentScreen == "hospitalityevent.aspx"
+    ) {
+      var categoryNameOf =
+        $eSRO.currentScreen == "hospitalityevent.aspx"
+          ? "matchday_packages"
+          : "hospitality_packages";
+      setTimeout(function () {
+        if ($(".itemsList .dataItem").length) {
+          $(".itemsList")
+            .children(".dataItem")
+            .each(function (i, e) {
+              var nameOf = $(this)
+                .data("name")
+                .toLowerCase()
+                .replace(/ /g, "_");
+              var IDOf = $(this).data("id") ? $(this).data("id") : "";
+
+              arrayOfItems.push({
+                name: nameOf ? nameOf : "",
+                ID: IDOf,
+                dateTime: "",
+                competition: "",
+              });
+            });
+          fireProductImpression(arrayOfItems, categoryNameOf, "manutd", "");
+        }
+      }, 500);
+    } else if ($eSRO.currentScreen == "membership.aspx") {
+      var folders = window.location.pathname;
+      var lastSegment = folders.split("/").pop();
+      var labelText = lastSegment.replace(/%20/g, "_");
+
+      setTimeout(function () {
+        var priceFor = $("[name=priceType]").val();
+        var memberPrice = membershipControl.membershipPrices[priceFor].listPrice;
+        var memberName = membershipControl.membershipPrices[priceFor].name;
+        var membershipName = memberName
+          ? memberName.toLowerCase().replace(/ /g, "_")
+          : "";
+        var memberListPrice = memberPrice ? memberPrice : "0";
+
+        fireTag("", labelText, membershipName, "membership", memberListPrice);
+
+        if (priceFor == 'eb21af49-adbc-eb11-830a-aa084c012628' || priceFor == 'cceb9a68-adbc-eb11-830a-aa084c012628'
+          || priceFor == 'e739855e-adbc-eb11-830a-aa084c012628' || priceFor == '65927470-adbc-eb11-830a-aa084c012628'
+          || priceFor == '67b1a052-adbc-eb11-830a-aa084c012628') {
+          $('input[name=enrollForAutoRenew]').val('False')
+        }
+        else {
+          $('input[name=enrollForAutoRenew]').val('True')
+        }
+
+        $("[name=priceType]").change(function (e) {
+          var priceFor = this.value;
+          var memberPrice =
+            membershipControl.membershipPrices[priceFor].listPrice;
+          var memberName = membershipControl.membershipPrices[priceFor].name;
+          var membershipName = memberName
+            ? memberName.toLowerCase().replace(/ /g, "_")
+            : "";
+          var memberListPrice = memberPrice ? memberPrice : "0";
+
+          fireTag(e, labelText, membershipName, "membership", memberListPrice);
+
+          if (priceFor == 'eb21af49-adbc-eb11-830a-aa084c012628' || priceFor == 'cceb9a68-adbc-eb11-830a-aa084c012628'
+            || priceFor == 'e739855e-adbc-eb11-830a-aa084c012628' || priceFor == '65927470-adbc-eb11-830a-aa084c012628'
+            || priceFor == '67b1a052-adbc-eb11-830a-aa084c012628') {
+            $('input[name=enrollForAutoRenew]').val('False')
+          }
+          else {
+            $('input[name=enrollForAutoRenew]').val('True')
+          }
+
+        });
+      }, 1250);
+    } else if ($eSRO.currentScreen == "event4.aspx") {
+      var folders = window.location.pathname;
+      var lastSegment = folders.split("/").pop();
+      var urlText = lastSegment.replace(/%20/g, "_");
+      if (folders.includes("subscriptions")) {
+
+        $("#btnProceed").click(function (e) {
+          var priceOf = $('.summary > .total ').text().substring(1);
+          // priceOf = priceOf ? parseFloat(priceOf) : 0
+
+          var finalPriceOf = priceOf == "" ? priceOf : "0";
+
+          fireTag(e, "car_parking", "car_parking", "car_parking", finalPriceOf);
+        });
+      } else
+        if (urlText == "stadium_tour") {
+          setTimeout(function () {
+            var tourType = $(".eventDetails .name")[0].innerHTML;
+            var currentPrice = $(".summary .total")[0].innerHTML.replace(
+              /Â£/g,
+              ""
+            );
+            var setPrice = currentPrice ? currentPrice : "0";
+            fireTag("", tourType, tourType, "tours", setPrice);
+
+          }, 1000);
+        } else if (urlText == "old_trafford") {
+          var url = $(location).attr("href").split("/").join("/");
+          var segments = url.split("/");
+          var dateTimeIs = segments[6];
+          var gameIs = segments[5];
+          var setGameIs = gameIs ? gameIs : "";
+          var setDateTimeIs = dateTimeIs ? dateTimeIs : "";
+          var cleanDateTime = setDateTimeIs
+            ? setDateTimeIs.replace(/-/g, "_")
+            : "";
+          var cleanMatchName = setGameIs ? setGameIs.replace(/%20/g, "_") : "";
+          var cleanerMatchName = cleanMatchName
+            ? cleanMatchName.replace(/ /g, "_")
+            : "";
+
+          fireTag("", cleanerMatchName, cleanDateTime, "tickets", "0");
+        } else {
+        }
+    } else if (
+      $eSRO.currentScreen == "confirmation.aspx"
+    ) {
+    digitalDataImpressionConfirmation();
+  }else if (
+      $eSRO.currentScreen == "order.aspx" ||
+      $eSRO.currentScreen == "checkout.aspx" ||
+      $eSRO.currentScreen == "delivery.aspx" ||   
+      $eSRO.currentScreen == "details.aspx" ||        
+      $eSRO.currentScreen == "opswarning.aspx" 
+    ) {
+  
+    //digitalDataImpression();
+  
+      var arrVar = [];
+      var brandName = "";
+      var productStr = "";
+
+      $eSRO.api
+        .call("TransactionController.CountBasketSaleItems")
+        .promise.then(function (snapshot) {
+          window.digitalData.cart.productsInCart = snapshot;
+          window.digitalData.cart.price.cartTotalUnits = snapshot;
+        });
+
+      $eSRO.api
+        .call("TransactionController.GetSnapshot")
+        .promise.then(function (snapshot) {
+          if (snapshot.Tickets.length) {
+            snapshot.Tickets.forEach(function (ticket, index) {
+              var gameName = ticket.ShowName.toLowerCase().replace(/ /g, "_");
+              var listPrice = ticket.TotalPriceAmount;
+              var priceType = ticket.PriceTypeName.toLowerCase().replace(
+                / /g,
+                "_"
+              );
+              var GTD = ticket.EventDateTime;
+              var da = GTD.getDate() + "";
+              var mo = GTD.getMonth() + 1 + "";
+              var ye = GTD.getFullYear().toString().substr(-2) + "";
+              var ho = GTD.getHours() + "";
+              var mi = GTD.getMinutes() + "";
+
+              var mainGameDate =
+                (da <= 9 ? "0" + da : da) +
+                (mo <= 9 ? "0" + mo : mo) +
+                ye +
+                "_" +
+                (ho <= 9 ? "0" + ho : ho) +
+                (mi <= 9 ? "0" + mi : mi);
+
+              var eventID = ticket.EventId;
+              if (gameName.indexOf("women") > -1) {
+                var brandName = "manutd_women";
+              } else if (gameName.indexOf("tours") > -1) {
+                var brandName = "tours";
+              } else {
+                var brandName = "tickets";
+              }
+
+              var product =
+                ";" +
+                gameName +
+                ";" +
+                "1" +
+                ";" +
+                listPrice * 1 +
+                ";;" +
+                "eVar18=" +
+                gameName +
+                "|eVar19=" +
+                listPrice +
+                "|eVar23=" +
+                brandName +
+                ",";
+
+              arrVar.push({
+                product,
+              });
+              productStr += product;
+            });
+          }
+          if (snapshot.GiftVouchers.length) {
+            snapshot.GiftVouchers.forEach(function (giftV, index) {
+              var voucherName = giftV.Name.toLowerCase()
+                .replace(/ /g, "_")
+                .replace(/-/g, "_");
+              var voucherValue = Number(
+                giftV.TotalValue.replace(/[^0-9.-]+/g, "")
+              );
+
+              var product =
+                ";" +
+                voucherName +
+                ";" +
+                "1" +
+                ";" +
+                voucherValue * 1 +
+                ";;" +
+                "eVar18=" +
+                voucherName +
+                "|eVar19=" +
+                voucherValue +
+                "|eVar23=gift_vouchers" +
+                ",";
+
+              arrVar.push({
+                product,
+              });
+              productStr += product;
+            });
+          }
+          if (snapshot.Memberships.length) {
+            snapshot.Memberships.forEach(function (memShip, index) {
+              var memberShipName = memShip.Description.toLowerCase()
+                .replace(/ /g, "_")
+                .replace(/-/g, "_");
+              var memPTName = memShip.PriceTypeName.toLowerCase()
+                .replace(/ /g, "_")
+                .replace(/-/g, "_");
+              var memPrice = Number(
+                memShip.TotalValue.replace(/[^0-9.-]+/g, "")
+              );
+
+              var product =
+                ";" +
+                memberShipName +
+                ";" +
+                "1" +
+                ";" +
+                memPrice * 1 +
+                ";;" +
+                "eVar18=" +
+                memberShipName +
+                "|eVar19=" +
+                memPrice +
+                "|eVar23=memberships" +
+                ",";
+
+              arrVar.push({
+                product,
+              });
+              productStr += product;
+            });
+          }
+          if (snapshot.Merchandise.length) {
+            // console.log('hiii')
+            snapshot.Merchandise.forEach(function (memShip, index) {
+              var memberShipName = replaceWhite(memShip.Description.toLowerCase())
+              var memPTName = ""
+              if (memShip.PriceTypeName)
+                memPTName = replaceWhite(memShip.PriceTypeName.toLowerCase())
+
+              var memPrice = Number(
+                memShip.TotalValue.replace(/[^0-9.-]+/g, "")
+              );
+              // console.log(memPrice, memPTName, memberShipName)
+
+              var product =
+                ";" +
+                memberShipName +
+                ";" +
+                "1" +
+                ";" +
+                memPrice * 1 +
+                ";;" +
+                "eVar18=" +
+                memberShipName +
+                "|eVar19=" +
+                memPrice +
+                "|eVar23=merchandise" +
+                ",";
+
+              arrVar.push({
+                product,
+              });
+
+              // console.log(arrVar, product)
+              productStr += product;
+            });
+          }
+          var isBasketClientLoggedIn = $eSRO.isClientLogedIn;
+          var setBasketUserType = isBasketClientLoggedIn
+            ? "logged"
+            : "not_logged";
+
+          window.digitalData.cart.cartProducts = productStr;
+      window.digitalData.product.productView = productStr;
+          window.digitalData.cart.price.cartTotal = snapshot.totalValue;
+          window.digitalData.cart.item = arrVar;
+          window.digitalData.currentTotal = snapshot.totalValue;
+          window.digitalData.cart.currentTotal = snapshot.totalValue;
+    
+
+        });
+    }
+  }
+  /*
+  * Digital Data for Membership Order page
+  */
+  function digitalDataImpression() {
+     window.digitalData.product.productEvent = 'Purchase';
+     $eSRO.api
+        .call("TransactionController.GetSnapshot")
+        .promise.then(function (snapshot) {
+          if (snapshot.Memberships.length) {
+            snapshot.Memberships.forEach(function (memShip, index) {
+              var memberShipName = memShip.Description.toLowerCase()
+                .replace(/ /g, "_")
+                .replace(/-/g, "_");
+              var memPTName = memShip.PriceTypeName.toLowerCase()
+                .replace(/ /g, "_")
+                .replace(/-/g, "_");
+              var memPrice = Number(
+                memShip.TotalValue.replace(/[^0-9.-]+/g, "")
+              );
+
+              var product =
+                ";" +
+                memberShipName +
+                ";" +
+                "1" +
+                ";" +
+                memPrice * 1 +
+                ";;" +
+                "eVar18=" +
+                memberShipName +
+                "|eVar19=" +
+                memPrice +
+                "|eVar23=memberships" +
+                ",";
+
+              arrVar.push({
+                product,
+              });
+              productStr += product;
+            });
+          }
+      
+      window.digitalData.product.productView = productStr;
+
+        });
+    }
+
+  /*
+  * Digital Data for Membership Order page
+  */
+  
+  
+  
+  function digitalDataImpressionConfirmation() {
+     window.digitalData.product.productEvent = 'Purchase';
+     $(document).ready(function () {
+     
+     if($("#basketContainer .basket-container .basketItem").length || $("#basketContainer .basket-container .basketEvent").length || $("#basketContainer .basket-container .hospSummary").length){
+      var prodString = "";
+      var totalPrice = 0;
+      var totalItems = 0;
+      var totalUnits = 0;
+      var arrVar = [];
+     }
+      if($("#basketContainer .basket-container .basketEvent").length) {
+        $("#basketContainer .basket-container .basketEvent").each(function (i, e) {
+          var name = $(this).find('.eventInfoSection').find('.eventDetails').find('.name').html();
+          if(!name) return
+          var name = name.replace(/ /g, "_").replace(/_/g, "_").replace(/(\r\n|\n|\r)/gm, "").toLowerCase();
+          
+          var count_tickets = $(this).find('.basketItemSummary .count').html();
+          if(!count_tickets) return
+          count_tickets = Number(count_tickets.replace(/[^0-9.-]+/g, ""));
+          
+          
+          var price = $(this).find('.basketItemSummary .PriceToPay').html();
+          if(!price) return
+          price = Number(price.replace(/[^0-9.-]+/g, ""));          
+          
+          totalPrice  += parseInt(price);
+          
+          var single_price = parseInt(price) / parseInt(count_tickets);
+          
+          var product =
+            ";"+name+";"+count_tickets+";"+price+";;eVar18="+name+"|eVar19="+single_price+"|eVar23=tickets,";
+            
+          prodString += product;
+          arrVar.push({
+            product,
+          });
+          totalItems++;
+          totalUnits  = parseInt(totalUnits)+parseInt(count_tickets);
+          
+        });
+        
+      }
+      
+      if($("#basketContainer .basket-container .basketItem").length) {
+        $("#basketContainer .basket-container .basketItem").each(function (i, e) {
+          var name = $(this).closest('.hasInfoSection').find('.infoSection').find('.name').html();
+          if(!name) return
+          var name = name.replace(/ /g, "_").replace(/_/g, "_").replace(/(\r\n|\n|\r)/gm, "").toLowerCase();
+          var price_type_name = $(this).find('span.PriceTypeName span').html();
+          if(!price_type_name) return
+          var price_type_name = price_type_name.replace(/ /g, "")
+          .replace(/-/g, "")
+          .replace(/(\r\n|\n|\r)/gm, "")
+          .toLowerCase();
+          var price = $(this).find('span.PriceToPay span').html();
+          if(!price) return
+          price = Number(price.replace(/[^0-9.-]+/g, ""));
+          var client_name = $(this).find('span.ClientId div.owner span.name').html();
+          totalPrice  += parseInt(price);
+          
+          var product =
+            ";"+name+";1;"+
+            price +";;eVar18=" +
+            name +
+            "|eVar19=" +
+            price +
+            "|eVar23=memberships,";
+          
+          prodString += product;
+          
+          arrVar.push({
+            product,
+          });
+          totalItems++;
+          totalUnits++;
+          
+        });
+      }
+      
+      
+      if($("#basketContainer .basket-container .hospSummary").length) {
+        $("#basketContainer .basket-container .hospSummary").each(function (i, e) {
+          var name = $(this).closest('.hospitalityGroup').find('.infoSection').find('.name').html();
+          var hop_title = $(this).html();
+          if(!hop_title) return
+
+          var name = name.replace(/ /g, "_").replace(/_/g, "_").replace(/(\r\n|\n|\r)/gm, "").toLowerCase();
+          count_hosp = Number(hop_title.match(/([\d]+)/g)[0]);
+          
+          var price = $(this).closest('.hospitalityGroup').find('.hospPrice').html();
+          if(!price) return
+          price = Number(price.replace(/[^0-9.-]+/g, ""));
+          
+          
+          totalPrice  += parseInt(price);
+          
+          var single_price = parseInt(price) / parseInt(count_hosp);
+          
+          var product =
+            ";"+name+";"+count_hosp+";"+price+";;eVar18="+name+"|eVar19="+single_price+"|eVar23=tickets,";
+            
+          prodString += product;
+          arrVar.push({
+            product,
+          });
+          totalItems++;
+          totalUnits  = parseInt(totalUnits)+parseInt(count_hosp);
+          
+        });
+      }
+      
+      
+      if($("#basketContainer .basket-container .basketItem").length || $("#basketContainer .basket-container .basketEvent").length || $("#basketContainer .basket-container .hospSummary").length){
+        window.digitalData.product.productView = prodString;
+        window.digitalData.cart.cartProducts = prodString;
+        window.digitalData.cart.price.cartTotalUnits = totalUnits;
+        window.digitalData.cart.price.cartTotal = totalPrice;
+        window.digitalData.cart.item = arrVar;
+        window.digitalData.currentTotal = totalPrice;
+        window.digitalData.cart.currentTotal = totalPrice;
+        window.digitalData.cart.productsInCart = totalItems;
+        console.log(window.digitalData);
+       }    
+    });
+    
+    
+    
+    } 
+  
+
+  if ($eSRO.currentScreen == "crmdetails.aspx") {
+  
+  $(document).ready(function () {
+  
+    //Ajax Request Complete
+    $( document ).ajaxComplete(function() {
+      ownTicketStrength();
+    }); 
+  });
+  
+    function ownTicketStrength() {
+      setTimeout(function () {
+        var checkFor = relatedClientsList ? relatedClientsList : [];
+        var mr_id = $eSRO.client.id ? $eSRO.client.id : "";
+    if($("[data-screenname*='eSRO.Crm.Ticketing.ChangeClientTicketsOwner'] .spScreenContent table tr").length) {
+      $("[data-screenname*='eSRO.Crm.Ticketing.ChangeClientTicketsOwner'] .spScreenContent table tr").each(function (e) {
+        var thisRowIDs = $(this).find('td.crm_grid_data.ChangeOwnershipLink span button')[0] ? $(this).find('td.crm_grid_data.ChangeOwnershipLink span button')[0] : "";
+        var thisRowAccept = $(this).find('td.crm_grid_data.isAvailableForChangeOfOwnership span').html() ? $(this).find('td.crm_grid_data.isAvailableForChangeOfOwnership span').html() : "False";
+        var thisRowSeries = $(this).find('td.crm_grid_data.SubscriberTicketType span').html() ? $(this).find('td.crm_grid_data.SubscriberTicketType span').html() : "";
+        $(this).find('td.crm_grid_data.ClientId span').each(function (e, value) {
+        var thisRowID = $(this).data('datavalue')
+        if (checkFor.find(x => x.ClientId == thisRowID && x.IsStrong == true && thisRowAccept == "True")) {
+          $(thisRowIDs).attr('disabled', false);
+        } else {
+          return;
+        }
+        });
+      });
+    }
+      }, 750);
+    }
+  }
+
+   setTimeout(function () {
+        console.log(' setTimeout(function () ')
+        _satellite.track('page_data_loaded');
+      }, 5000)
+
+
+  /* Hide Memberships Price Types */
+  $(document).ready(function () {
+    if (window.location.href.indexOf("full%20membership") > -1) {
+        $('#dvPriceTypesRadioButtons input[value="fc0940c4-f380-eb11-82e4-d8e040011278"] + label').remove();
+        $('#dvPriceTypesRadioButtons input[value="fc0940c4-f380-eb11-82e4-d8e040011278"]').remove();
+    }
+});
+
+</script>
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+
+//Replace default text on subscriptionrenew page if ST off sale or not having ST for renew.
+
+$(document).ready(function() {
+  if (
+    window.location.href.toLowerCase().indexOf("subscriptionrenew.aspx") !== -1 &&
+    $eSRO.currentScreen !== "subscriptionrenew.aspx"
+  ) {
+    function replaceText() {
+      var searchTerm = "There were no subscriptions found that could be renewed at this time.";
+      var replacementText = "\
+        <div>\
+          <h2>2024/25 Season Ticket holders:</h2>\
+          <ul>\
+            <li>You will be contacted when you are eligible to renew.</li>\
+          </ul>\
+          <p>Not a Season Ticket holder? Click here to find out more. <a href='https://tickets.manutd.com/subscriptions'>Click here</a></p>\
+        </div>";
+
+      if ($(".small_text_b:contains('" + searchTerm + "')").length > 0) {
+        $(".small_text_b:contains('" + searchTerm + "')").html(function(_, html) {
+          return html.replace(searchTerm, replacementText);
+        });
+      }
+    }
+
+    replaceText();
+  }
+});
+
+// Add disclaimer for FA Cup or CC resale
+
+ setTimeout(function () {
+        if (window.location.href.includes('resale.aspx')) {
+            $('.basketEvent').each(function () {
+                if ($(this).text().includes('(FA Cup)') || $(this).text().includes('(Carabao Cup)')) {
+                    $(this).find('.extra').html('<strong style="color: #c70101;">Season Ticket Holders please note that requesting a refund for a Cup match will affect your eligibility for away fixtures.</strong>');
+      
+				}
+            });
+        }
+    }, 3000);
+	
+	
+/* Season Ticket Renewals */
+
+$(window).bind("load", function () {
+  $(document).ready(function() {
+    if ($eSRO.currentScreen === "subscriptionrenew.aspx") {
+
+              var basketHospCounter = setInterval(function () {
+
+                  $(".subsRenewEntry").each(function () {
+                      $(this).children(".seriesOptions").children("span:last-child").hide();
+                      $(this).children(".seriesOptions").children("span:nth-child(3)").show();
+                      console.log("!");
+                  });
+
+              }, 1000);
+
+              $(".subsRenewEntry").each(function () {
+                $(this).children(".seriesOptions").children("span").children(".subSeries").hide();
+                $(this).children(".seriesOptions").children("span:last-child").hide();
+                $(this).children(".seriesOptions").children("span:nth-child(3)").show();
+                $(this).children(".seriesOptions").children("span:last-child").addClass("hide");
+                $(this).children(".seriesOptions").children("span:nth-child(3)").addClass("show");
+
+                /* Hide Below Packages for Everyone */
+
+                if ($(this).children(".details").children('.priceTypeName:contains("Stretford Suite Dining")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Trafford Suite Dining")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Manchester Suite Dining")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Salford Grill Dining")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Manchester Suite- Adult Meal")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Salford Grill- Adult Meal")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Stretford Suite- Adult Meal")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Manchester Suite- Kids Meal")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Salford Grill- Kids Meal")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Stretford Suite- Kids Meal")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Manchester Suite- Food & Drinks Package")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Salford Grill- Food & Drinks Package")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Stretford Suite- Food & Drinks Package")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Trafford Suite Dining")').length >= 1) {
+                          
+                          $(this).children(".seriesOptions").children("span:nth-child(3)").children("input").click();
+                          $(this).remove();
+                }
+
+               /* if ($(this).children(".details").children('.seriesName:contains("Hospitality")').length == 0) {
+                    $(this).children(".seriesOptions").children("span").children(".subSeries").children("option[value=9e3b3f1a-785f-ed11-83d1-f7062b22b16d]").remove();
+
+                    /* Hide Below Packages for Hospitality Series 
+                    
+                    if ($(this).children(".details").children('.priceTypeName:contains("1878")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Captains Lounge")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Centennial Suites")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Evolution")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Knights Lounge")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("The International")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Manchester Suite")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Manchester Suite VIP")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Premier Suite")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Salford Suite")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("The 100 Club")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("The 1968 Suite")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("The 1999 Suite")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("The 500 Club")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("The Gallery")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Old Boardroom")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Kit Room")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("The Academy")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Stretford Suite Dining")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Trafford Suite Dining")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Manchester Suite Dining")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Salford Grill Dining")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Sir Bobby Charlton Suites")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Stretford Suite Window Table")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("TV Studio")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Hospitality Lounge L3")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Hospitality Lounge L5")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Hospitality Lounge L7")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Hospitality")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("SAF L3 Boxes")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("SAF L7 Boxes")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("East Stand Boxes")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("North East Boxes")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("SBC Stand Boxes")').length >= 1 ||
+                        $(this).children(".details").children('.priceTypeName:contains("Stretford End Boxes")').length >= 1) {
+                        
+                        $(this).children(".seriesOptions").children("span:nth-child(3)").children("input").click();
+                        $(this).remove();
+                    }
+                }*/
+              });
+
+               /* Register Alert */
+
+               $('.buttonsFooter button.small_button_a').click(function() {
+                if($('.itemscount').text() == "(0 items)"){
+                  alert("Thank you, this has been registered");
+                }
+              });
+
+              /* Update first paragraph of content */
+
+              /*if ($("body").hasClass("client-has-type-eSROTesting")) {
+
+                $(".content-wrapper:not(.title) .content > p:first-of-type").html("Supporters have until 6pm on Friday 5th May to make payment for 2023/24, but need to confirm by 15th March if they intend to renew or not otherwise seats will be released for those who are required to move from other areas of the stadium.  <b>If you do not plan to renew,</b> please select \"Cancel and release this seat\" which will release the seat immediately. <br><br>You can renew now by selecting <i>\"Yes, I want to renew now\"</i> or confirm you will renew prior to the payment deadline of 5th May but pay later by selecting <i>\"Reserve and pay later\"</i> or <i>\"Undecided\"</i>. Please note selecting the latter option will not appear to process anything on your online account but will be registered.");
+
+              }*/
+			  
+			  
+			  /* Renaming Series name */
+
+              $(document).ready(function() 
+			  {
+              $(".seriesName").text("Your Seasonal Product"); 
+               });
+			
+			
+			/* Renaming the Reserve and pay later button to something else for Hospitality Clients. */
+					
+						/*$(document).ready(function() {
+						    $(".subsRenewEntry").each(function() {
+						        var priceTypeName = $(this).find(".priceTypeName").text().trim();
+						        var extendedHoldLabel = $(this).find(".show label[for^='rad']:contains('Reserve and pay later')");
+						
+						        if (!["Adult", "Over 66", "18-20", "Youth", "16-17", "Under 16", "Complimentary", "Comp - Carer/PA"].includes(priceTypeName)) {
+						            var originalText = 'Reserve and pay later';
+						            var replacementText = 'Renew later' + '\xa0'.repeat(originalText.length - 'Renew later'.length +10); // no idea why +10 but that's how it aligns
+						            extendedHoldLabel.text(replacementText);
+						        }
+						    });
+						});*/
+			/* END last - Renaming the Reserve and pay later button to something else for Hospitality Clients. */
+			
+
+			/* Check if GA price type or any other price type is displayed. If GA is showed then display GA info, if both or only hospo are shown then display accordingly*/
+			/* the actual HTML pulls from the SubscriptionRenew.aspx page */
+
+			  	var validValues = ['Adult', 'Over 66', '16-17', 'Complimentary', 'Comp - Carer/PA', 'Youth', 'Under 16', '18-20', 'Car Park Permit', 'Coach Park Permit'];
+			
+			    // Flags to check if valid and excluded values are present
+			    var validValuePresent = false;
+			    var excludedValuePresent = false;
+			
+			    // Iterate through each subsRenewEntry and check the priceTypeName
+			    $('.subsRenewEntry').each(function () {
+			        var priceTypeNameText = $(this).find('.priceTypeName').text();
+			
+			        // Check if the content of priceTypeName includes any of the valid values
+			        if (validValues.some(value => priceTypeNameText.includes(value))) {
+			            // If it matches, set the flag for valid value
+			            validValuePresent = true;
+			        }
+			
+			        // Check if the content of priceTypeName includes any of the excluded values
+			        if (validValues.indexOf(priceTypeNameText) === -1) {
+			            // If it does not match any valid value, set the flag for excluded value
+			            excludedValuePresent = true;
+			        }
+			    });
+			
+			    // Display the conditional HTMLs based on the flags
+			    if (validValuePresent) {
+			        $('#conditionalHtml').show();
+			    }
+			    if (excludedValuePresent) {
+			        $('#conditionalHtml2').show();
+			    }
+			/* END-  Check if GA price type or any other price type is displayed. If GA is showed then display GA info, if both or only hospo are shown then display accordingly*/
+						
+	
+    }
+  });
+});
+
+</script>
+
+<style>
+  .seriesOptions > SPAN.hide {
+    display: none !important;
+  }
+  .seriesOptions > SPAN.show {
+    display: block !important;
+  }
+  .buttonsFooter button .itemscount {
+    display: none;
+  }
+</style>
+
+<!--Membership pop up to prompt renewals, dismissable for 24 hours and based on CT-->
+
+
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Membership Popup</title>
+  <style>
+    /* Popup styles */
+    .popup {
+      display: none; /* Hidden by default */
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%); /* Center the popup */
+      width: 80%; /* Smaller width */
+      max-width: 600px; /* Max width for larger screens */
+      height: auto; /* Let height adjust to content */
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+      z-index: 9999; /* Make sure it appears on top */
+      border-radius: 10px; /* Rounded corners */
+      padding: 0; /* No padding on outer container */
+      box-sizing: border-box; /* Include borders in size */
+    }
+
+    /* Dim the background and block interaction with other elements */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+      display: none;
+    }
+
+    .popup-content {
+      background-image: url('https://tickets.manutd.com/usercontent/documents/images/renewprompt.jpg');
+      background-size: cover;
+      background-position: center;
+      width: 100%;
+      height: 100%; /* Fill the .popup container */
+      min-height: 400px; /* Minimum height for desktop */
+      padding: 20px; /* Padding inside content */
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Centers vertically */
+      align-items: center; /* Centers horizontally */
+      text-align: center;
+      color: white;
+      font-family: Arial, sans-serif;
+      border-radius: 10px; /* Match outer radius */
+      box-sizing: border-box; /* Include padding in size */
+    }
+
+    .popup-text {
+      background-color: rgba(0, 0, 0, 0.6); /* Dark background behind text */
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block; /* Tight wrap around text */
+    }
+
+    .popup-text h2 {
+      font-size: 3.6em; /* Twice the size */
+      margin: 0;
+    }
+
+    .popup-text p {
+      font-size: 2.2em; /* Larger text */
+      margin: 10px 0;
+    }
+
+    .renew-btn {
+      background-color: #c70101; /* Red color */
+      color: white;
+      padding: 15px 30px;
+      font-size: 1.8em; /* Larger button text */
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+
+    .renew-btn:hover {
+      background-color: #9f0000;
+      color: white;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 3em; /* Larger close button */
+      cursor: pointer;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .popup-content {
+        min-height: 300px; /* Reduced height for mobile */
+        padding: 15px; /* Slightly less padding */
+      }
+
+      .popup-text h2 {
+        font-size: 2.8em;
+      }
+
+      .popup-text p {
+        font-size: 1.6em;
+      }
+
+      .popup-text {
+        padding: 15px; /* Match padding reduction */
+      }
+
+      .renew-btn {
+        font-size: 1.6em;
+        padding: 12px 25px;
+        color: white;
+      }
+
+      .close-btn {
+        font-size: 2.5em;
+      }
+    }
+  </style>
+
+
+  <!-- Overlay to block interaction with the rest of the website -->
+  <div id="overlay" class="overlay"></div>
+
+  <!-- Popup HTML -->
+  <div id="membership-popup" class="popup">
+    <div class="popup-content">
+      <span class="close-btn" title="Close" aria-label="Close Popup">×</span>
+      <div class="popup-text">
+        <h2>Renew Your Official Membership!</h2>
+        <p>Don’t miss out on the 25/26 season.</p>
+        <a href="/memberships?int_source=SG_RenewalPopup&amp;int_medium=Modal&amp;int_campaign=membership2425&amp;int_content=OM2425_SG_RenewalPopup" class="renew-btn">Renew Now</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      setTimeout(function () {
+        if (!window.location.href.includes('membership') && !window.location.href.includes('crmdetails') && !window.location.href.includes('hospitality') && $("body").hasClass("client-has-type-MembershipRenewPrompt")) {
+          if (getDismissCount() < 3) {
+            $("#membership-popup").show();
+            $("#overlay").show();
+            $(".close-btn").click(function() {
+              $("#membership-popup").fadeOut();
+              $("#overlay").fadeOut();
+              incrementDismissCount();
+            });
+          } else {
+            $("#membership-popup").hide();
+            $("#overlay").hide();
+          }
+          let lastVisit = localStorage.getItem('lastVisit');
+          let currentDate = new Date().getTime();
+          if (!lastVisit || (currentDate - lastVisit) > 86400000) {
+            resetDismissCount();
+            localStorage.setItem('lastVisit', currentDate);
+          }
+        }
+      }, 500);
+
+      function getDismissCount() {
+        return localStorage.getItem('popupDismissCount') ? parseInt(localStorage.getItem('popupDismissCount')) : 0;
+      }
+
+      function resetDismissCount() {
+        localStorage.setItem('popupDismissCount', 0);
+      }
+
+      function incrementDismissCount() {
+        let dismissCount = getDismissCount();
+        dismissCount += 1;
+        localStorage.setItem('popupDismissCount', dismissCount);
+      }
+    });
+  </script>
+
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+			'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+			})(window,document,'script','dataLayer','GTM-NPX7WN');</script>
+    
+    <script type="text/javascript">
+        (function () {
+            var postMsgObjOk = true;
+            try {
+                window.postMessage({
+                    toString: function () {
+                        postMsgObjOk = false;
+                    }
+                }, "*");
+            } catch (e) { }
+
+            function PostIframeHeight(eventName) {
+                var height = (document.scrollingElement || document.documentElement).scrollHeight;
+
+                var data = { "EventName": eventName, "CalculatedHeight": height, "DocumentHeight": height, "MaxHeight": height, "MinHeight": height, "screen": $eSRO.currentScreen };
+                if (!postMsgObjOk) {
+                    data = JSON.stringify(data);
+                }
+                window.parent.postMessage(data, "*");
+            }
+
+            function inIframe() {
+                try {
+                    var tempInIframe = window.self !== window.top;
+                    $('body').toggleClass('inIframe', tempInIframe);
+
+                    return tempInIframe;
+                } catch (e) {
+                    return true;
+                }
+            }
+
+            $(window).on("resize load domchanged.esro", function (ev) {
+                if (inIframe()) {
+                    PostIframeHeight(ev.type);
+                }
+            }).on("dialogopen", function (ev) {
+                if (inIframe()) {
+                    window.parent.postMessage({ "EventName": ev.type, "screen": $eSRO.currentScreen }, "*");
+                }
+            });
+        })();
+    </script>
+
+
+    <noscript><iframe style="height:100%;width:100%" frameborder="0" src="ConfigureBrowser.aspx"></iframe></noscript><noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NPX7WN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><div class="screenPartContainer ph_datadome" id="PH_DataDome">
+	<script>
+    !function(a,b,c,d,e,f){a.ddjskey=e;a.ddoptions=f||null;var m=b.createElement(c),n=b.getElementsByTagName(c)[0];m.async=1,m.src=d,n.parentNode.insertBefore(m,n)}(window,document,"script","https://datadome.seatgeek.com/tags.js","13C44BAB4C9D728BBD66E2A9F0233C", { ajaxListenerPath : true, allowHtmlContentTypeOnCaptcha: true });
+</script>
+
+</div><div class="screenPartContainer ph_headerbackground-fixed" id="PH_HeaderBackground-fixed" style="">
+	<div style="width:100%;height:100%;"></div>
+</div><div id="group_Header-fixed" role="region" class="secondary" data-arialandmark="" data-tooltip="Top header"><button type="button" class="skipRegion" tabindex="0" aria-label="Top header region. Press ENTER for the next region in screen. Press SHIFT+ENTER for the previous region. Press TAB to focus on this region."></button><div class="screenPartContainer ph_topbar" id="PH_TopBar">
+	<div class="screenPartContainer ph_float_menu" id="PH_Float_Menu" role="navigation" data-arialandmark="" data-tooltip="Main menu"><button type="button" class="skipRegion" tabindex="0" aria-label="undefined region. Press ENTER for the next region in screen. Press SHIFT+ENTER for the previous region. Press TAB to focus on this region."></button>
+
+<div class="float_menu_background" id="siteMenuBar1">
+    <div class="siteMenuContainer">
+    
+<a class="flm_www.manutd.com float_menu_item" id="navMenu_Float_www.manutd.com_item" href="https://www.manutd.com">
+    <span>
+        www.manutd.com
+    </span>
+</a>
+
+    </div>
+</div>
+</div>
+</div><div class="screenPartContainer ph_customheader" id="PH_CustomHeader">
+	<div class="primary-header-sponsors" data-container="header">
+    <ul>
+                            <li data-cardname="header primary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com//en/Partners/Global/adidas" target="_self" data-partner-name="Adidas" data-partner-text="Official Kit Supplier" data-tracksponsor="">
+                                    <img onerror="this.className='no-img'" src="/usercontent/documents/images/header/ADILOGONEW.png" alt="Sponsored by Adidas Logo " title="">
+                                </a>
+                            </li>
+                            <li data-cardname="header primary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Snapdragon" target="_self" data-partner-name="SnapDragon" data-partner-text="Principal Partner" data-tracksponsor="">
+                                    <img onerror="this.className='no-img'" src="/usercontent/documents/images/header/Snapdragonwhite.png" alt="Sponsored by SnapDragon Logo " title="">
+                                </a>
+                            </li>
+                            <li data-cardname="header primary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://tezos.com/manutd/" target="_self" data-partner-name="Tezos" data-partner-text="" data-tracksponsor="">
+                                    <img onerror="this.className='no-img'" src="/usercontent/documents/images/header/TezosLogo_Horizontal_White1644483074005.png" alt="Sponsored by Tezos Logo " title="">
+                                </a>
+                            </li>
+                            <li data-cardname="header primary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com//en/Partners/Global/" target="_self" data-partner-name="DXC" data-partner-text="" data-tracksponsor="">
+                                    <img onerror="this.className='no-img'" src="/usercontent/documents/images/header/DXC Logo White.png" alt="Sponsored by DXC Logo " title="">
+                                </a>
+                            </li>
+
+    </ul>
+</div>
+</div><div class="screenPartContainer ph_menuback" id="PH_MenuBack" style="">
+	<a style="width:100%;height:100%;" href="javascript:window.history.back()" class="backbutton onlymobile" aria-label="Press ENTER to go back"><i class="fa fa-angle-left"></i></a>
+</div><div class="screenPartContainer ph_logo" id="PH_logo" style="">
+	
+<a class="logo-container" href="./" aria-label="Logo. Press ENTER to go to the Home page"></a>
+
+</div><div class="screenPartContainer ph_main_menu" id="PH_Main_Menu" style="">
+	
+<div id="navMenu_Top" class="Main navMenu main_menu_background">
+    
+    <ul id="navMenu_Top_nav" class="nav navMenu-List" role="application">
+        
+                <li id="buyMoreListItem" class="navMenu-FirstLevelItem  navmenu_BuyMore youAreHere"><button class="BuyMore navMenu-Heading navMenu-FirstLevelItem" id="buyMoreLink" tabindex="0"><span>Buy more</span></button></li><li id="navMenu_Top_Tickets" class="navMenu-FirstLevelItem subMenuClose navmenu_Tickets">
+                    
+<a class="Tickets navMenu-Heading navMenu-FirstLevelItem" href="javascript:void(0)" id="navMenu_Top_Tickets_item">
+    <span>
+        Tickets
+    </span>
+</a><button class="expandSubMenuButton" tabindex="0" aria-label="Press ENTER to open the sub-menu of Tickets
+    
+
+    
+        Other
+    
+
+    
+        Help &amp; Info"></button>
+                    
+                            <ul class="navMenu-SubList">
+                        
+                                <li class="navMenu-Item selected">
+                                    
+<a class="Home_Tickets" href="/en-GB/categories/home-tickets" id="navMenu_Top_Home_Tickets_item">
+    <span>
+        Men's Home Tickets
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="AwayTickets" href="/en-GB/categories/away-tickets" id="navMenu_Top_AwayTickets_item">
+    <span>
+        Men's Away Tickets
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Europa_League" href="https://tickets.manutd.com/en-GB/categories/Europa-League" id="navMenu_Top_Europa_League_item">
+    <span>
+        Men's Cup Games
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Womens_Team" href="/en-GB/categories/womens" id="navMenu_Top_Womens_Team_item">
+    <span>
+        Women's Home Tickets
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Womens_Away_Tickets" href="https://tickets.manutd.com/en-GB/categories/womens-away" id="navMenu_Top_Womens_Away_Tickets_item">
+    <span>
+        Women's Away Tickets
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="SubscriptionList" href="subscriptions" id="navMenu_Top_SubscriptionList_item">
+    <span>
+        Seasonal Products
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Ballots" href="/ballots" id="navMenu_Top_Ballots_item">
+    <span>
+        Ballots
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Car_Parking" href="/en-GB/categories/car-parking" id="navMenu_Top_Car_Parking_item">
+    <span>
+        Car Parking
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Under_21_Tickets" href="https://tickets.manutd.com/en-GB/categories/Academy-Tickets" id="navMenu_Top_Under_21_Tickets_item">
+    <span>
+        Academy Tickets
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Special_Events" href="https://tickets.manutd.com/en-GB/categories/special-events" id="navMenu_Top_Special_Events_item">
+    <span>
+        Special Events
+    </span>
+</a>
+                                </li>
+                        
+                            </ul>
+                        
+                </li>
+            
+                <li id="navMenu_Top_AllMembership" class="navMenu-FirstLevelItem  navmenu_AllMembership">
+                    
+<a class="AllMembership navMenu-Heading navMenu-FirstLevelItem" href="memberships" id="navMenu_Top_AllMembership_item">
+    <span>
+        memberships
+    </span>
+</a>
+                    
+                </li>
+            
+                <li id="navMenu_Top_Hospitality" class="navMenu-FirstLevelItem  navmenu_Hospitality">
+                    
+<a class="Hospitality navMenu-Heading navMenu-FirstLevelItem" href="hospitality" id="navMenu_Top_Hospitality_item">
+    <span>
+        Hospitality
+    </span>
+</a>
+                    
+                </li>
+            
+                <li id="navMenu_Top_ToursEvents" class="navMenu-FirstLevelItem  navmenu_ToursEvents">
+                    
+<a class="ToursEvents navMenu-Heading navMenu-FirstLevelItem" href="/en-GB/categories/tours" id="navMenu_Top_ToursEvents_item">
+    <span>
+        Old Trafford Tour &amp; Museum 
+    </span>
+</a>
+                    
+                </li>
+            
+                <li id="navMenu_Top_Other" class="navMenu-FirstLevelItem subMenuClose navmenu_Other">
+                    
+<a class="Other navMenu-Heading navMenu-FirstLevelItem" href="javascript:void(0)" id="navMenu_Top_Other_item">
+    <span>
+        Other
+    </span>
+</a><button class="expandSubMenuButton" tabindex="0" aria-label="Press ENTER to open the sub-menu of Tickets
+    
+
+    
+        Other
+    
+
+    
+        Help &amp; Info"></button>
+                    
+                            <ul class="navMenu-SubList">
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="GiftVouchersList" href="giftVouchers" id="navMenu_Top_GiftVouchersList_item">
+    <span>
+        Gift Vouchers
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Gifting" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/gifting.html" id="navMenu_Top_Gifting_item">
+    <span>
+        Gifting
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Official_Ticket_and_Hotel_Breaks" href="https://www.sportsbreaks.com/Football/Premier-League/Manchester-United?utm_source=Man+Utd&amp;utm_medium=Referral&amp;utm_campaign=Ticket_Site_2425" id="navMenu_Top_Official_Ticket_and_Hotel_Breaks_item" target="_blank">
+    <span>
+        Official Ticket and Hotel Breaks
+    </span>
+</a>
+                                </li>
+                        
+                            </ul>
+                        
+                </li>
+            
+                <li id="navMenu_Top_Help &amp; Info" class="navMenu-FirstLevelItem subMenuClose navmenu_Help &amp; Info">
+                    
+<a class="Help_&amp;_Info navMenu-Heading navMenu-FirstLevelItem" href="javascript:void(0)" id="navMenu_Top_Help_&amp;_Info_item">
+    <span>
+        Help &amp; Info
+    </span>
+</a><button class="expandSubMenuButton" tabindex="0" aria-label="Press ENTER to open the sub-menu of Tickets
+    
+
+    
+        Other
+    
+
+    
+        Help &amp; Info"></button>
+                    
+                            <ul class="navMenu-SubList">
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Executive_Club" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/Executive%20Club.html" id="navMenu_Top_Executive_Club_item">
+    <span>
+        Executive Club
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Matchday_Hospitality" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/Matchday%20Hospitality.html" id="navMenu_Top_Matchday_Hospitality_item">
+    <span>
+        Matchday Hospitality
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Online_Ticketing_Help" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/help.html" id="navMenu_Top_Online_Ticketing_Help_item">
+    <span>
+        Ticketing
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Domestic_Away_Games" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/domestic-away-games.html" id="navMenu_Top_Domestic_Away_Games_item">
+    <span>
+        Domestic Away Games
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Official_Memberships_Help" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/official-membership.html" id="navMenu_Top_Official_Memberships_Help_item">
+    <span>
+        memberships
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Accessibility" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/accessibility.html" id="navMenu_Top_Accessibility_item">
+    <span>
+        Accessibility
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Ticket_Touting" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/Touting.html" id="navMenu_Top_Ticket_Touting_item">
+    <span>
+        Ticket Touting
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Museum_&amp;_Tour" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/museum-and-tour.html" id="navMenu_Top_Museum_&amp;_Tour_item">
+    <span>
+        Old Trafford Tour &amp; Museum
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Women's_Football" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/Women.html" id="navMenu_Top_Women's_Football_item">
+    <span>
+        Women's Team
+    </span>
+</a>
+                                </li>
+                        
+                            </ul>
+                        
+                </li>
+            
+    </ul>
+</div>
+<script type="text/javascript">
+(function() {
+    var container = $("script:last").prev(".navMenu");
+    require(['js/menu'], function(menu) {
+        menu.init(container);
+    });
+})();
+</script>
+
+</div></div><div class="screenPartContainer ph_headerbackground" id="PH_HeaderBackground" style="">
+	<div style="width:100%;height:100%;"></div>
+</div><div id="group_Header" role="banner" data-arialandmark="" data-tooltip="Main header"><button type="button" class="skipRegion" tabindex="0" aria-label="Main header region. Press ENTER for the next region in screen. Press SHIFT+ENTER for the previous region. Press TAB to focus on this region."></button><div class="screenPartContainer ph_menubutton" id="PH_MenuButton" style="">
+	<a style="width:100%;height:100%;" href="#menu" class="menu_btn" aria-label="Press ENTER to open the menu"></a>
+</div><div class="screenPartContainer ph_largelogo" id="PH_LargeLogo">
+	
+<a class="logo-container" href="./" aria-label="Logo. Press ENTER to go to the Home page"></a>
+
+</div><div class="screenPartContainer ph_adplaceholder" id="PH_AdPlaceHolder" style="">
+	<div style="width:100%;height:100%;"></div>
+</div><div class="screenPartContainer ph_menu" id="PH_Menu">
+	
+<div id="navMenu_Main" class="Main navMenu main_menu_background">
+    
+    <ul id="navMenu_Main_nav" class="nav navMenu-List">
+        
+                <li id="navMenu_Main_Tickets" class="navMenu-FirstLevelItem subMenuClose navmenu_Tickets" role="application">
+                    
+<a class="Tickets navMenu-Heading navMenu-FirstLevelItem" href="javascript:void(0)" id="navMenu_Main_Tickets_item" aria-label="Tickets menu item.   Down-arrow enters the sub-menu.  TAB continues navigation in menu.">
+    <span>
+        Tickets
+    </span>
+</a>
+                    
+                            <ul class="navMenu-SubList">
+                        
+                                <li class="navMenu-Item selected">
+                                    
+<a class="Home_Tickets" href="/en-GB/categories/home-tickets" id="navMenu_Main_Home_Tickets_item" aria-label="Men's Home Tickets menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Men's Home Tickets
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="AwayTickets" href="/en-GB/categories/away-tickets" id="navMenu_Main_AwayTickets_item" aria-label="Men's Away Tickets menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Men's Away Tickets
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Europa_League" href="https://tickets.manutd.com/en-GB/categories/Europa-League" id="navMenu_Main_Europa_League_item" aria-label="Men's Cup Games menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Men's Cup Games
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Womens_Team" href="/en-GB/categories/womens" id="navMenu_Main_Womens_Team_item" aria-label="Women's Home Tickets menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Women's Home Tickets
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Womens_Away_Tickets" href="https://tickets.manutd.com/en-GB/categories/womens-away" id="navMenu_Main_Womens_Away_Tickets_item" aria-label="Women's Away Tickets menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Women's Away Tickets
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="SubscriptionList" href="subscriptions" id="navMenu_Main_SubscriptionList_item" aria-label="Seasonal Products menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Seasonal Products
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Ballots" href="/ballots" id="navMenu_Main_Ballots_item" aria-label="Ballots menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Ballots
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Car_Parking" href="/en-GB/categories/car-parking" id="navMenu_Main_Car_Parking_item" aria-label="Car Parking menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Car Parking
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Under_21_Tickets" href="https://tickets.manutd.com/en-GB/categories/Academy-Tickets" id="navMenu_Main_Under_21_Tickets_item" aria-label="Academy Tickets menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Academy Tickets
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Special_Events" href="https://tickets.manutd.com/en-GB/categories/special-events" id="navMenu_Main_Special_Events_item" aria-label="Special Events menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Special Events
+    </span>
+</a>
+                                </li>
+                        
+                            </ul>
+                        
+                </li>
+            
+                <li id="navMenu_Main_AllMembership" class="navMenu-FirstLevelItem  navmenu_AllMembership">
+                    
+<a class="AllMembership navMenu-Heading navMenu-FirstLevelItem" href="memberships" id="navMenu_Main_AllMembership_item">
+    <span>
+        memberships
+    </span>
+</a>
+                    
+                </li>
+            
+                <li id="navMenu_Main_Hospitality" class="navMenu-FirstLevelItem  navmenu_Hospitality">
+                    
+<a class="Hospitality navMenu-Heading navMenu-FirstLevelItem" href="hospitality" id="navMenu_Main_Hospitality_item">
+    <span>
+        Hospitality
+    </span>
+</a>
+                    
+                </li>
+            
+                <li id="navMenu_Main_ToursEvents" class="navMenu-FirstLevelItem  navmenu_ToursEvents">
+                    
+<a class="ToursEvents navMenu-Heading navMenu-FirstLevelItem" href="/en-GB/categories/tours" id="navMenu_Main_ToursEvents_item">
+    <span>
+        Old Trafford Tour &amp; Museum 
+    </span>
+</a>
+                    
+                </li>
+            
+                <li id="navMenu_Main_Other" class="navMenu-FirstLevelItem subMenuClose navmenu_Other" role="application">
+                    
+<a class="Other navMenu-Heading navMenu-FirstLevelItem" href="javascript:void(0)" id="navMenu_Main_Other_item" aria-label="Other menu item.   Down-arrow enters the sub-menu.  TAB continues navigation in menu.">
+    <span>
+        Other
+    </span>
+</a>
+                    
+                            <ul class="navMenu-SubList">
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="GiftVouchersList" href="giftVouchers" id="navMenu_Main_GiftVouchersList_item" aria-label="Gift Vouchers menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Gift Vouchers
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Gifting" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/gifting.html" id="navMenu_Main_Gifting_item" aria-label="Gifting menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Gifting
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Official_Ticket_and_Hotel_Breaks" href="https://www.sportsbreaks.com/Football/Premier-League/Manchester-United?utm_source=Man+Utd&amp;utm_medium=Referral&amp;utm_campaign=Ticket_Site_2425" id="navMenu_Main_Official_Ticket_and_Hotel_Breaks_item" target="_blank" aria-label="Official Ticket and Hotel Breaks menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Official Ticket and Hotel Breaks
+    </span>
+</a>
+                                </li>
+                        
+                            </ul>
+                        
+                </li>
+            
+                <li id="navMenu_Main_Help &amp; Info" class="navMenu-FirstLevelItem subMenuClose navmenu_Help &amp; Info" role="application">
+                    
+<a class="Help_&amp;_Info navMenu-Heading navMenu-FirstLevelItem" href="javascript:void(0)" id="navMenu_Main_Help_&amp;_Info_item" aria-label="Help &amp; Info menu item.   Down-arrow enters the sub-menu.  TAB continues navigation in menu.">
+    <span>
+        Help &amp; Info
+    </span>
+</a>
+                    
+                            <ul class="navMenu-SubList">
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Executive_Club" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/Executive%20Club.html" id="navMenu_Main_Executive_Club_item" aria-label="Executive Club menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Executive Club
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Matchday_Hospitality" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/Matchday%20Hospitality.html" id="navMenu_Main_Matchday_Hospitality_item" aria-label="Matchday Hospitality menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Matchday Hospitality
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Online_Ticketing_Help" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/help.html" id="navMenu_Main_Online_Ticketing_Help_item" aria-label="Ticketing menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Ticketing
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Domestic_Away_Games" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/domestic-away-games.html" id="navMenu_Main_Domestic_Away_Games_item" aria-label="Domestic Away Games menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Domestic Away Games
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Official_Memberships_Help" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/official-membership.html" id="navMenu_Main_Official_Memberships_Help_item" aria-label="memberships menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        memberships
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Accessibility" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/accessibility.html" id="navMenu_Main_Accessibility_item" aria-label="Accessibility menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Accessibility
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Ticket_Touting" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/Touting.html" id="navMenu_Main_Ticket_Touting_item" aria-label="Ticket Touting menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Ticket Touting
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Museum_&amp;_Tour" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/museum-and-tour.html" id="navMenu_Main_Museum_&amp;_Tour_item" aria-label="Old Trafford Tour &amp; Museum menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Old Trafford Tour &amp; Museum
+    </span>
+</a>
+                                </li>
+                        
+                                <li class="navMenu-Item">
+                                    
+<a class="Women's_Football" href="/screenloader.aspx?type=include&amp;page=usercontent/documents/html/Women.html" id="navMenu_Main_Women's_Football_item" aria-label="Women's Team menu item. Press ENTER to select this menu item. To navigate options in the sub-menu, use the Up and Down arrows">
+    <span>
+        Women's Team
+    </span>
+</a>
+                                </li>
+                        
+                            </ul>
+                        
+                </li>
+            
+    </ul>
+</div>
+<script type="text/javascript">
+(function() {
+    var container = $("script:last").prev(".navMenu");
+    require(['js/menu'], function(menu) {
+        menu.init(container);
+    });
+})();
+</script>
+
+</div><div class="screenPartContainer ph_float_menu" id="PH_Float_Menu" role="navigation" data-arialandmark="" data-tooltip="Main menu"><button type="button" class="skipRegion" tabindex="0" aria-label="Main menu region. Press ENTER for the next region in screen. Press SHIFT+ENTER for the previous region. Press TAB to focus on this region."></button>
+	
+
+<div id="siteMenuBar" class="float_menu_background">
+    <div class="siteMenuContainer">
+    
+<button type="button" class="flm_login float_menu_item" onclick="javascript:require('idmSso').login()" id="navMenu_Float_login_item">
+
+        <span class="mnuBtnCaption">
+        My Account
+        </span>
+</button>
+<button type="button" class="flm_Join float_menu_item" onclick="javascript:require('idmSso').register()" id="navMenu_Float_Join_item">
+
+        <span class="mnuBtnCaption">
+        Register
+        </span>
+</button>
+<div class="flm_CountDown float_menu_item" id="CountDown" aria-hidden="true">
+    
+
+<script type="text/javascript">
+    (function () {
+        var container = $(".timerMessage:last")
+        require(["js/timeCountDown"], function (timeCountDown) {
+            timeCountDown.init(
+                container,
+                0,
+                420,
+                false,
+                30
+            );
+        });
+    })();
+</script>
+<div id="qtip-0" class="qtip qtip-default timer-tooltip compact qtip-pos-lt qtip-focus" tracking="false" role="alert" aria-live="polite" aria-atomic="false" aria-describedby="qtip-0-content" aria-hidden="false" data-qtip-id="0" style="z-index: 15001; display: block;"><div class="qtip-tip" style="display: none;"><canvas></canvas></div><div class="qtip-content" id="qtip-0-content" aria-atomic="true"><div id="relocating-timer" class="timerMessage" style="display: none; visibility: visible;">
+    <div class="CountDownRemainingTimeTitle"></div>
+    <!--Button to cancel the whole transaction-->
+    <div class="CountDownRemainingTimeTitle">
+        <button class="CancelTransFromTimer btnCancel btnLink" onclick="cancelTransaction()">
+            <span aria-hidden="true">Remove all items</span>
+        </button>
+    </div>
+    <div class="graphicCountdownHolder" aria-hidden="true">
+        <span class="timerText" aria-hidden="true"></span>
+        <div class="graphicCountdown">&nbsp;</div>
+    </div>
+</div></div></div></div>
+<script type="text/javascript">
+var rsrcItemsInBasket = 'Items in basket';
+var rsrcBasketIsEmpty = 'Basket is empty';
+</script>
+<script type="text/javascript">
+    (function() {
+        function setMenuElementProperties(menuElement, href, tooltip) {
+            menuElement.attr({ 'title': tooltip, 'href': href });
+        }
+        function clearMe() {
+            var menuElement = $(".flm_my_basket");
+            menuElement.find('.basketQtyHolder').remove();
+            setMenuElementProperties(menuElement, "javascript:void(0)", rsrcBasketIsEmpty);
+        }
+        $(document).bind("basketCommitted.esro", function(ev) {
+            clearMe();
+        });
+        $(document).bind("basketUpdated.esro", function(ev, hasItems) {
+
+
+            if (hasItems == true || typeof hasItems == 'undefined') {
+                $eSRO.api.call("TransactionController.CountBasketSaleItems", {}, undefined, function(response) {
+
+                    if (response == null)
+                        return;
+                    var result = null;
+                    try {
+                        result = response();
+                        var menuElement = $(".flm_my_basket");
+                        if (result == 0) {
+                            clearMe();
+                        }
+                        else {
+                            var entry = menuElement.find('.basketQtyHolder');
+                            if (entry.length == 1) {
+                                entry.html(result);
+                            }
+                            else {
+                                if (typeof result != 'undefined') {
+                                    menuElement.find('span').append("<span class='basketQtyHolder'>{0}</span>".format(result));
+                                }
+                            }
+                          
+                            setMenuElementProperties(menuElement, $eSRO.sitePath + $eSRO.orderPage, result + " " + rsrcItemsInBasket);
+                        }
+                    }
+                    catch (ex) {
+                        $debug.log('failed get basket count: {0}'.format(ex.message));
+                    }
+
+                });
+            }
+            else {
+                clearMe();
+            }
+        });
+    } ());
+    
+</script>
+
+<a class="flm_my_basket float_menu_item" href="order.aspx" id="my_basket" title="Basket is empty" aria-label="Basket is empty" aria-disabled="true">
+    <span data-hasqtip="0" aria-describedby="qtip-0">
+        Basket
+    </span>
+</a>
+    </div>
+</div>
+</div></div><div id="group_0"><div class="screenPartContainer ph_htmlpergenre" id="PH_HtmlPerGenre">
+	
+
+	<div id="genrehtml"><div id="genrehtmlhome-tickets"><style>
+        [data-name*="Atmosphere"] .itemsDateRange, 
+		[data-name*="atmosphere"] .itemsDateRange,
+		[data-name*="Atmosphere"] .description #eventhallname
+		
+		{
+            display: none !important;
+        }
+		
+		[data-name*="Hospitality Season Ticket: Executive Club 2025/26"] .itemsDateRange, 
+		[data-name*="Hospitality Season Ticket: Executive Club 2025/26"] .itemsDateRange,
+		[data-name*="Hospitality Season Ticket: Executive Club 2025/26"] .description #eventhallname
+		{
+            display: none !important;
+        }
+		
+		
+		/*[data-name*="UNITED WOMEN V MAN CITY - UNITED WE FIGHT!"] .itemsDataContainer,
+		[data-name*="UNITED WOMEN V MAN CITY - UNITED WE FIGHT!"] .itemsButtonsContainer,
+		[data-name*="UNITED WOMEN V MAN CITY - UNITED WE FIGHT!"] .ExtendedData6,
+		[data-name*="UNITED WOMEN V MAN CITY - UNITED WE FIGHT!"] .itemsButtonsContainer 
+		{
+  		background-color: #BC9D4C !important;
+		}*/
+		
+		.dataItem.item_background.item_data_background.set[data-name*="Hospitality Season Ticket: Executive Club 2025/26"] 
+		{
+ 		 background-color: #C70101 !important;
+  		 color: #FFFFFF !important;
+			}
+			
+/*putting the atmosphere stadium at the top irrespective of date and time*/
+    </style>
+<script>$(document).ready(function() {
+    var $itemsList = $('#ctl00_body_EventsListControl');
+    var $atmosphereEvent = $itemsList.find('.dataItem').filter(function() {
+        return $(this).find('#eventhallname').text().trim() === 'Atmosphere Section';
+    }).detach();
+    $itemsList.prepend($atmosphereEvent);
+});</script>
+
+<div class="content-wrapper title">
+  <div class="content">
+    <h1>Home Tickets</h1>
+    <p>This is the only place to buy official general admission tickets to watch Manchester United, any other websites that advertise tickets for sale are fraudulent therefore you must only buy tickets from this site.</p>
+  	<!--<p><b>Match tickets:</b> are sold exclusively to <a href="https://tickets.manutd.com/memberships" target="_blank">Official Members</a> and there will be multiple releases and opportunties for our members to purchase tickets throughout the season! Specific release dates will be added to individual game information so keep visiting us to make sure you don't miss out on your favourite fixture.<br><br>-->
+	<b>Keep up to date:</b> 2025/26 Premier League fixtures will be released on Wednesday 18 June. Click <a href="https://www.manutd.com/en/ticketalert" target="_blank">here</a> to sign up to our Ticket Alert emails and stay up to date with all things ticket related!<br><br>
+	<!--<b>Matchday Hospitality:</b> Don't miss a moment of the Premier League action at Old Trafford and secure your seat now to any home game. With a range of options to suit every taste and budget there's something for everyone, including our new entry level offerings. Visit our <a href="https://tickets.manutd.com/hospitality">Hospitality Page</a> or click "Buy Hospitality" below to find out more.-->
+  <p></p>
+  </div>
+</div>
+
+<div class="content-wrapper">
+  <div class="content">
+    <!--<p>If you can't find what you're looking for, sign up to our ticket alert <a href="https://www.manutd.com/ticketalert" target="_blank">here</a> to be the first to be notified as and when tickets become available for your favourite fixtures.</p>-->
+  </div>
+</div>  
+</div></div>
+	<script type="text/javascript">
+
+		function generateCacheBuster() {
+			var now = new Date();
+			var minutes = now.getMinutes();
+			var roundedMinutes = 10 * Math.floor(minutes / 10);
+			now.setMinutes(roundedMinutes);
+			now.setSeconds(0);
+			now.setMilliseconds(0);
+
+			// Convert to a timestamp or another format as needed
+			return now.getTime();
+		}
+
+		var timeStamp = generateCacheBuster();
+
+		function loadPage(href)
+		{
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.open("GET", href, false);
+			xmlhttp.send();
+			return xmlhttp.responseText;
+		}
+		var folders = window.location.pathname;
+		var lastSegment = folders.split('/').pop();
+		if ($.isNumeric(lastSegment)){ 
+			var folders = folders.split("/").slice(0, -1).join("/");
+			var lastSegment = folders.split('/').pop();
+		}
+		if (lastSegment == "" || lastSegment == "default.aspx") 
+		{
+
+			pathToLoad = location.protocol + '//' + window.location.host + '/usercontent/documents' + $eSRO.siteBasePath + 'html/default.aspx.html?bust=' + timeStamp;
+            $.ajax({
+            url:pathToLoad,
+            type:'HEAD',
+            success: function()
+            {
+                $('#genrehtml').append($('<div id="genrehtmlhome">' + loadPage(pathToLoad) + '</div>'));
+            }
+            });
+
+		}
+		else if ((folders.indexOf("/categories/") !== -1) || ($eSRO.currentScreen=="donationslist.aspx") || ($eSRO.currentScreen=="membershipslist.aspx") || ($eSRO.currentScreen=="subscriptionlist.aspx") || ($eSRO.currentScreen=="hospitalityevents.aspx") || ($eSRO.currentScreen=="giftvoucherslist.aspx") || ($eSRO.currentScreen=="customerreservedseats.aspx") || ($eSRO.currentScreen=="subscriptionrenew.aspx") || ($eSRO.currentScreen=="hospitalitysubscriptions.aspx") || ($eSRO.currentScreen=="merchandisecategories.aspx"))
+		{
+            
+            pathToLoad = location.protocol + '//' + window.location.host + '/usercontent/documents' + $eSRO.siteBasePath + 'html/' + lastSegment + '.html?bust=' + timeStamp;
+            $.ajax({
+            url:pathToLoad,
+            type:'HEAD',
+            error: function()
+            {
+                $('#genrehtml').append($('<div id="genrehtml"><div class="content-wrapper"><div class="content"></div></div></div>'));
+            },
+            success: function()
+            {
+                $('#genrehtml').append($('<div id="genrehtml' + lastSegment + '">' + loadPage(pathToLoad) + '</div>'));
+            }
+            });
+            
+		}
+		else if (lastSegment == "calendar.aspx") 
+		{
+
+			pathToLoad = location.protocol + '//' + window.location.host + '/usercontent/documents' + $eSRO.siteBasePath + 'html/calendar.html?bust=' + timeStamp;
+            $('#genrehtml').append($('<div id="genrehtmlcal">' + loadPage(pathToLoad) + '</div>'));
+
+		}
+		else if (lastSegment == "LinkCustomer.aspx") 
+		{
+
+			pathToLoad = location.protocol + '//' + window.location.host + '/usercontent/documents' + $eSRO.siteBasePath + 'html/linkcustomer.html?bust=' + timeStamp;
+            $.ajax({
+            url:pathToLoad,
+            type:'HEAD',
+            success: function()
+            {
+                $('#genrehtml').append($('<div id="genrehtml' + lastSegment + '">' + loadPage(pathToLoad) + '</div>'));
+            }
+            });
+
+		} else if ($eSRO.currentScreen=="hospitalityevent.aspx") {
+
+			pathToLoad = location.protocol + '//' + window.location.host + '/usercontent/documents' + $eSRO.siteBasePath + 'html/hospitalityevent.html?bust=' + timeStamp;
+            $.ajax({
+            url:pathToLoad,
+            type:'HEAD',
+            success: function()
+            {
+                //document.getElementById('genrehtml').innerHTML = '<div id="genrehtml' + lastSegment + '">' + loadPage(pathToLoad) + '</div>';
+				$(loadPage(pathToLoad)).insertAfter( ".eventTitle" );
+            }
+            });
+		}
+	</script>
+
+		
+
+</div><div class="screenPartContainer ph_js" id="PH_js">
+	<script type="text/javascript">
+	$(document).ready(function () {
+		console.log("no-cache js updated 07/08/24 10:00");
+
+		/* Force ST Card */
+		/*
+        setTimeout(function () {
+            if (!$('.cup-st').length && $eSRO.currentScreen === "subscriptionlist.aspx") {
+                var newCard = '<div class="card cup-st"><a class="absolute-link" href="/en-GB/subscriptions/cup%20season%20ticket%202022-23?hallmap"></a><a class="image-link" href="/en-GB/subscriptions/cup%20season%20ticket%202022-23?hallmap"><img src="/usercontent/documents/images/season-tickets/CST-SG-Card-660x880x.jpg" alt="Cup Season Ticket"></a><div class="card-content"><h2>Cup Season Tickets</h2><span>On sale to Official Members</span><div class="landing-buttons"><a class="landing-button" href="/en-GB/subscriptions/cup%20season%20ticket%202022-23?hallmap">Buy Now</a></div></div></div>';
+                $(".cards-wrapper .cards:first-child").prepend(newCard);
+            }
+            if ($('.cup-st').length && $eSRO.currentScreen === "subscriptionlist.aspx") {
+                $(".cards-wrapper .cards:first-child .card:nth-child(2)").hide();
+            }
+        }, 500);
+        */
+
+		/* Seasonal Hospitality Card Test */
+		if ($eSRO.currentScreen === "subscriptionlist.aspx" && $(".client-has-type-eSROTesting").length) {
+			setTimeout(function () {
+				if (!$(".hosp-st").length) {
+					var newCard =
+						'<div class="card hosp-st"><a class="absolute-link" href="/en-GB/hospitalitySubscription/executive%20club%20waiting%20list"></a><a class="image-link" href="/en-GB/hospitalitySubscription/executive%20club%20waiting%20list"><img src="/usercontent/documents/images/season-tickets/hospitality.jpg?v=1" alt="Seasonal Hospitality"></a><div class="card-content"><h2>Seasonal Hospitality</h2><span>Be there for every game, join the Executive Club</span><div class="landing-buttons"><a class="landing-button" href="/en-GB/hospitalitySubscription/executive%20club%20waiting%20list">Join Now</a></div></div></div>';
+					$(".cards-wrapper .cards:nth-child(2)").prepend(newCard);
+				}
+				if ($(".hosp-st").length) {
+					$(".cards-wrapper .cards:nth-child(2) .card:nth-child(2)").hide();
+				}
+			}, 500);
+		}
+
+		/* Add Class for available hospitality packages */
+
+		if ($eSRO.currentScreen === "hospitalityevent.aspx") {
+			$(".dataItem").each(function () {
+				if (!$(this).children(".itemsButtonsContainer").children(".button").is(".disabled")) {
+					$(this).addClass("available");
+				}
+			});
+		}
+
+		if ($eSRO.currentScreen === "membership.aspx") {
+			var membershipcheck = setInterval(() => {
+				if ($('.membershipExistsWarning div.purchaseOption .small_button_a:contains("renew")').length > 0) {
+					clearInterval(membershipcheck);
+					$('.membershipExistsWarning div.purchaseOption .small_button_a:contains("renew")').after(
+						'<div class="renew"><a href="/CrmDetails.aspx#eSRO_Crm_ActiveMemberships" class="small_button_a">Renew</a></div>'
+					);
+				}
+			}, 20);
+		}
+
+		// Add class to hide sponsors
+		if (
+			$eSRO.currentScreen === "event4.aspx" &&
+			window.location.href.indexOf("women's%20euro%202022%20england%20v%20austria%20(car%20parking)") > -1
+		) {
+			$("body").addClass("sponsor-hide");
+		}
+
+		// Hide Saved Card
+		/*
+        if ($eSRO.currentScreen === "checkout.aspx") {
+            $('#row_pf_489_PreviousPayment').remove();
+        }
+        */
+
+		/* Exec Club Message */
+
+		if (
+			$eSRO.currentScreen === "hospitalityevents.aspx" &&
+			($(".client-has-type-eSROTesting").length || $(".client-has-type-ExecManchesterSuite").length || $(".client-has-type-ExecSalfordSuite").length)
+		) {
+			var execcheck = setInterval(() => {
+				if ($(".content-wrapper.title .content").length && !$(".exec-message").length) {
+					clearInterval(execcheck);
+					$(".content-wrapper.title .content").append(
+						'<p class="exec-message">If you are an Executive Club member and would like to purchase dining please <a href="https://tickets.manutd.com/en-GB/categories/executive-club-dining">click here</a>.</p>'
+					);
+				}
+			}, 20);
+		}
+	});
+
+	$(window).bind("load", function () {
+		console.log("no-cache loaded");
+	});
+</script>
+<style>
+	body .itemsList .dataItem[data-name="Centennial Suite - Private Executive Box "],
+    body .itemsList .dataItem[data-name="Hospitality - The 500 Club"],
+    body .itemsList .dataItem[data-name="Hospitality - Captains Lounge"],
+    body .itemsList .dataItem[data-name="Hospitality - Evolution"],
+    /* body .itemsList .dataItem[data-name="Hospitality - The International"], */
+    body .itemsList .dataItem[data-name="Hospitality - Knights Lounge"],
+    body .itemsList .dataItem[data-name="Hospitality - Old Boardroom"],
+    body .itemsList .dataItem[data-name="Hospitality - Premier Suite"],
+    body .itemsList .dataItem[data-name="Hospitality - 1878"],
+    body .itemsList .dataItem[data-name="Hospitality - The Gallery"],
+    body .itemsList .dataItem[data-name="Hospitality - The 1968 Suite"],
+    body .itemsList .dataItem[data-name="Hospitality - The 1999 Suite"],
+    body .itemsList .dataItem[data-name="Hospitality - Salford Suite"],
+    body .itemsList .dataItem[data-name="Hospitality - Kit Room"],
+    body .itemsList .dataItem[data-name="Hospitality - Manchester Suite"],
+    body .itemsList .dataItem[data-name="Hospitality - Manchester Suite VIP"],
+    body .itemsList .dataItem[data-name="Hospitality - The Academy"],
+    body .itemsList .dataItem[data-name="Hospitality - Weekend Breaks"],
+    body .itemsList .dataItem[data-name="Hospitality - The 100 Club"],
+    body .itemsList .dataItem[data-name="Hospitality - Stretford Suite Window Table"],
+    body .itemsList .dataItem[data-name="Hospitality - Sir Bobby Charlton Suites"],
+    body .itemsList .dataItem[data-name="Hospitality - Ambassadors"],
+    body .itemsList .dataItem[data-name="Hospitality - Directors Box VIP / DDR Seats"],
+    body .itemsList .dataItem[data-name="Hospitality - Directors Box VIP / DDR Dining"],
+    body .itemsList .dataItem[data-name="Hospitality - Chairmans Lounge"],
+    body .itemsList .dataItem[data-name="Hospitality - TV Studio"],
+    body .itemsList .dataItem[data-name="Hospitality Lounges Level 3"],
+    body .itemsList .dataItem[data-name="Hospitality Lounges Level 5"],
+    body .itemsList .dataItem[data-name="Hospitality Lounges Level 7"],
+    body .itemsList .dataItem[data-name="Hospitality - SAF Level 3 Box (A)"],
+    body .itemsList .dataItem[data-name="Hospitality - SAF Level 7 Box (A)"],
+    body .itemsList .dataItem[data-name="Hospitality - East Stand Boxes"],
+    body .itemsList .dataItem[data-name="Hospitality - North East Boxes"],
+    body .itemsList .dataItem[data-name="Hospitality - Stretford End Boxes"],
+    body .itemsList .dataItem[data-name="Hospitality - Centennial Suites"],
+    body .itemsList .dataItem[data-name="Hospitality - Sir Bobby Charlton Stand Boxes"],
+    body .itemsList .dataItem[data-name="Hospitality - East Stand Box (A)"],
+    body .itemsList .dataItem[data-name="Hospitality - East Stand Box (B)"],
+    body .itemsList .dataItem[data-name="Hospitality - East Stand Box (B-Behind Glass)"],
+    body .itemsList .dataItem[data-name="Hospitality - Stretford End Box (8)"],
+    body .itemsList .dataItem[data-name="Hospitality - Stretford End Box (10)"],
+    body .itemsList .dataItem[data-name="Hospitality - Stretford End Box (16)"],
+    body .itemsList .dataItem[data-name="Hospitality - SAF Level 3 Box (B)"],
+    body .itemsList .dataItem[data-name="Hospitality - SAF Level 3 Box (C)"],
+    body .itemsList .dataItem[data-name="Hospitality - SAF Level 7 Box (B)"],
+    body .itemsList .dataItem[data-name="Hospitality - Suites SAF L5"],
+    body .itemsList .dataItem[data-name="Hospitality - SBC Stand Suites A"],
+    body .itemsList .dataItem[data-name="Hospitality - SBC Stand Suites B"],
+    body .itemsList .dataItem[data-name="Hospitality - SBC Stand Suites C"],
+    /* body .itemsList .dataItem[data-name="Hospitality - Warwick Suite"], */
+    body .itemsList .dataItem:not(.available)[data-name="Hospitality - Lancashire Package Tier 1"],
+    body .itemsList .dataItem:not(.available)[data-name="Hospitality - Victoria Warehouse"],
+    body .itemsList .dataItem[data-name="Hospitality - SAF Level 3 Boxes"],
+    body .itemsList .dataItem[data-name="Hospitality - Evolution Premium Experience "],
+    body .itemsList .dataItem:not(.available)[data-name="Hospitality - Manchester Suite A"],
+    body .itemsList .dataItem:not(.available)[data-name="Hospitality - Manchester Suite B"],
+    body .itemsList .dataItem:not(.available)[data-name="Hospitality - Generic Quad Restaurants"],
+    body .itemsList .dataItem[data-name="Hospitality - No. 7 at Old Trafford"],
+	body .itemsList .dataItem[data-name="Hospitality - Heritage Club"],
+	body .itemsList .dataItem[data-name="Hospitality - Victoria Warehouse (Seasonal Offer) "],
+	body .itemsList .dataItem[data-name="Premium Seating - South Stand"],
+    /* body .itemsList .dataItem[data-name="Salford Suite Grill - Hospitality"], */
+    body .itemsList .dataItem[data-name="Premium Seating - Sponsors"],
+    body .itemsList .dataItem[data-name="Hospitality - The Trinity Club Pre & Post Match"],
+    body .itemsList .dataItem[data-name="Hospitality - Treble Suite Upper"],
+    body .itemsList .dataItem[data-name="Hospitality - Treble Suite Lower"],
+    /* body .itemsList .dataItem[data-name="Hospitality - Treble Suite"], */
+    body .itemsList .dataItem[data-name="Hospitality - Maybank Box"],
+
+    body .itemsList .dataItem[data-name="Matchday Hospitality - Heritage Club"],
+    body .itemsList .dataItem[data-name="Matchday Hospitality - the Gallery"],
+    body .itemsList .dataItem[data-name="Matchday Hospitality - Salford Suite"],
+    body .itemsList .dataItem[data-name="Matchday Hospitality - Manchester Suite VIP"],
+    body .itemsList .dataItem[data-name="Matchday Hospitality - 1878"],
+    body .itemsList .dataItem[data-name="Hospitality - Manchester Suite A"],
+    body .itemsList .dataItem[data-name="Hospitality - Manchester Suite B"],
+    body .itemsList .dataItem[data-name="Hospitality - The United Road Bar"],
+    body .itemsList .dataItem[data-name="Hospitality - The Devils Bar"],
+    body .itemsList .dataItem[data-name="Hospitality - Sir Alex Ferguson Stand Boxes 24"],
+    body .itemsList .dataItem[data-name="Hospitality - Sir Alex Ferguson Stand Boxes 16"],
+    body .itemsList .dataItem[data-name="Hospitality - Sir Alex Ferguson Stand Boxes 8-A"],
+    body .itemsList .dataItem[data-name="Hospitality - Sir Alex Ferguson Stand Boxes 8-B"],
+    body .itemsList .dataItem[data-name="Hospitality - Sir Alex Ferguson Stand Boxes 8-C"],
+    body .itemsList .dataItem[data-name="Hospitality - Sir Alex Ferguson Stand Boxes 8-D"],
+    body .itemsList .dataItem[data-name="Hospitality - Sir Alex Ferguson Stand Boxes 8-E"],
+    body .itemsList .dataItem[data-name="Hospitality - Sir Alex Ferguson Stand Boxes 8-F"],
+    body .itemsList .dataItem[data-name*="Reseller"]
+    /*body .itemsList .dataItem[data-name^="Ticket Plus"]*/ {
+		display: none;
+	}
+
+	/*
+    div#row_pf_489_PreviousPayment {
+        display: none !important;
+    } 
+        */
+
+	/* Trending Tag */
+
+	.dataItem[data-id="a5cdecbb-11f8-ee11-8444-f3bd3e23a544"] a.item_image_container:after {
+		content: "Trending";
+	}
+</style>
+
+</div></div><div class="screenPartContainer screen-content ph_recommended_events" id="PH_Recommended_Events" role="main" data-arialandmark="" data-tooltip="Main content"><button type="button" class="skipRegion" tabindex="0" aria-label="Main content: This is the main region in this screen. Press ENTER for the next region. Press SHIFT+ENTER for the previous region. Press TAB to focus on this region."></button>
+	
+<div id="eventsList">
+    
+<script type="text/javascript" src="js/products.js"></script>
+<script type="text/javascript">
+    var rsrcBtnClose = "Close";
+    var shouldBlockAllItemClick = true;
+    
+    require(['js/itemsList', 'js/itemsListUtils'], function(undefinedlist, utils){
+        
+        $(function(){
+        createItemsList($("#ctl00_body_EventsListControl"), false);
+        });
+    });
+    
+</script>
+
+        <div class="itemsList" id="ctl00_body_EventsListControl"><div class="dataItem item_background item_data_background set" data-name="Hospitality Season Ticket: Executive Club 2025/26" data-date="639138671400000000" data-id="bd1feedc-644b-ef11-84a5-c7e03c59c3cf" tabindex="0">
+            <div class="item_image_container"><div class="item_image"></div></div>
+            <div class="itemsDataContainer">
+                <span class="small_text_d name">
+                    Hospitality Season Ticket: Executive Club 2025/26</span>
+                <div class="small_text_a description">
+                    <span id="eventcompetition"><p class="MsoNormal">
+  <font color="#ffffff">
+    <span style="font-size: 12pt; font-family: " source="" sans="" pro",="" sans-serif;"="">
+      Don't miss a moment of the 2025/26 season, secure your place now. A limited number of Executive Club seats are available to purchase, providing you with a range of food &amp; drink options, exceptional service and a range of other benefits. Click 
+      <a href="https://tickets.manutd.com/screenloader.aspx?type=include&amp;page=usercontent%2fdocuments%2fhtml%2fExecutiveclub2526.html" style="">here</a> 
+      to find out more or call 0161 676 7770 to speak to a member of our friendly team.
+    </span>
+  </font>
+</p>
+
+</span><span id="eventhallname">Atmosphere Section</span></div>
+                
+            </div>
+            <div class="small_text_b extras">
+                    <span class="occupancy LowSeatsOccupation">Plenty of tickets</span>
+            </div>
+            <div class="small_text_a dates itemsDateRange">
+                To be confirmed
+            </div>
+            
+            <div class="itemsButtonsContainer">
+                
+
+
+<div class="button small_button_a addToBasket" data-origclass="button small_button_a addToBasket" data-disabledclass="disabled" style="display: none;">
+    <a href="en-GB/events/hospitality%20season%20ticket-%20executive%20club%202025-26/2026-5-8_19.59/atmosphere%20section" onclick="" data-clickevent="en-GB/events/hospitality%20season%20ticket-%20executive%20club%202025-26/2026-5-8_19.59/atmosphere%20section" data-clientclickevent="" id="ctl00$body$EventsListControl_btnAddToBasket_2" data-eventguid="bd1feedc-644b-ef11-84a5-c7e03c59c3cf" tabindex="0">
+        Buy Now<img class="small_arrow_1_right" src="style/images/small_arrow_1_right.gif" alt="Next"></a></div>
+
+                
+            </div>
+            <div class="ExtendedData8">Hide</div>
+        </div><div class="filterContainer"><div class="combo"><label for="searchCat"></label><input type="text" id="searchCat" name="searchCat" class="filter-search" autocomplete="off" placeholder="Search for a team..."><div class="suggestions"><div class="suggest acf fiorentina">acf fiorentina</div><div class="suggest hospitality season ticket: executive club 2025/26">hospitality season ticket: executive club 2025/26</div><div class="suggest manchester united">manchester united</div><div class="suggest soccer aid for unicef 2025">soccer aid for unicef 2025</div></div></div><select id="filterTeam" class="filter"><option value="">Filter by team</option><option value="acf fiorentina">acf fiorentina</option><option value="hospitality season ticket: executive club 2025/26">hospitality season ticket: executive club 2025/26</option><option value="manchester united">manchester united</option><option value="soccer aid for unicef 2025">soccer aid for unicef 2025</option></select><select id="filterDate" class="filter"></select><select id="filterMonth" class="filter"><option value="">Filter by month</option><option value="Aug">August</option><option value="Date &amp; Time TBC">Date &amp; Time TBC</option><option value="Jun">June</option></select><select id="filterVenue" class="filter"></select><select id="filterCompetition" class="filter"></select><button class="reset-filter">Reset</button></div>
+            <div id="ctl00_body_EventsListControl_ItemsListControl_ctl00_sortingContainer" class="sortingContainer"><div class="label">Sort by</div><select name="ctl00$body$EventsListControl$ItemsListControl$ctl00$ctl01">
+		<option value="date">Date</option>
+		<option value="name">Name</option>
+	</select></div>
+    
+        <div class="dataItem item_background item_data_background set" data-name="Soccer Aid for UNICEF 2025" data-date="638856126000000000" data-id="a861a095-cbed-ef11-84f5-b416e3fbaf8e" tabindex="0">
+            <a tabindex="-1" aria-hidden="true" href="en-GB/events/soccer%20aid%20for%20unicef%202025/2025-6-15_19.30/old%20trafford" class="item_image_container">
+                <div class="item_image">
+                    
+                <img class="item_image mainImage" src="//manchesterunited.seatgeekenterprise.com/weblink/10026/get.resource/images/2057/1001025.png?etag=7C53244C1E0012515FEA63C84C036093" title="" alt="" onerror="$(this).parent().addClass('missing')">
+                <img class="item_image otherImageLargeImageUrl" src="//manchesterunited.seatgeekenterprise.com/weblink/10026/get.resource/images/2057/1001058.png?etag=72A205565E5840A71733794EF6E292A7" title="" alt="" onerror="$(this).parent().addClass('missing')">
+                <img class="item_image otherImageMediumImageUrl" src="//manchesterunited.seatgeekenterprise.com/weblink/10026/get.resource/images/2057/1001058.png?etag=72A205565E5840A71733794EF6E292A7" title="" alt="" onerror="$(this).parent().addClass('missing')">
+                </div>
+            </a>
+            <div class="itemsDataContainer">
+                <span class="small_text_d name">
+                    Soccer Aid for UNICEF 2025</span>
+                <div class="small_text_a description">
+                    <span id="eventcompetition"></span><span id="eventhallname">Old Trafford </span></div>
+                
+            </div>
+            <div class="small_text_b extras">
+                    <span class="occupancy HighSeatsOccupancy">Last tickets</span>
+            </div>
+            <div class="small_text_a dates itemsDateRange">
+                <h2 id="cal">15 Jun</h2><span id="day3">Sun</span><span id="kickoff">19:30</span>
+            </div>
+            
+            <div class="itemsButtonsContainer">
+                
+
+
+<div class="button small_button_a addToBasket" data-origclass="button small_button_a addToBasket" data-disabledclass="disabled">
+    <a href="en-GB/events/soccer%20aid%20for%20unicef%202025/2025-6-15_19.30/old%20trafford" onclick="" data-clickevent="en-GB/events/soccer%20aid%20for%20unicef%202025/2025-6-15_19.30/old%20trafford" data-clientclickevent="" id="ctl00$body$EventsListControl_btnAddToBasket_0" data-eventguid="a861a095-cbed-ef11-84f5-b416e3fbaf8e" tabindex="0">
+        Buy Now<img class="small_arrow_1_right" src="style/images/small_arrow_1_right.gif" alt="Next"></a></div>
+
+                
+            </div>
+            <div class="ExtendedData1">Soccer Aid for UNICEF returns to Old Trafford on 15 June! Watch England v World XI FC at the Theatre of Dreams in the world's biggest charity football game. Hospitality packages are on sale now. For accessible seats, please call 0161 676 7770.<br><br>For general admission tickets, please visit https://www.socceraid.org.uk/.</div><div class="ExtendedData6"><a href="https://tickets.manutd.com/en-GB/hospitality/soccer%20aid%20for%20unicef%202025/2025-6-15_19.30/old%20trafford">Buy Hospitality</a></div>
+        </div>
+    
+        <div class="dataItem item_background item_data_background set" data-name="Manchester United v ACF Fiorentina" data-date="638903403000000000" data-id="2b031800-9b10-f011-8506-cc4ef2d15c94" tabindex="0">
+            <a tabindex="-1" aria-hidden="true" class="item_image_container">
+                <div class="item_image">
+                    
+                <img class="item_image mainImage" src="//manchesterunited.seatgeekenterprise.com/weblink/10026/get.resource/images/2057/1000276.png?etag=6AB3168F7DE5BACEC27C021D6F4D0CBD" title="Pre-Season Friendly" alt="Pre-Season Friendly" onerror="$(this).parent().addClass('missing')">
+                <img class="item_image otherImageLargeImageUrl" src="//manchesterunited.seatgeekenterprise.com/weblink/10026/get.resource/images/2057/1001032.png?etag=CD1883381D95CA21B6E64CD77B52E8A7" title="Pre-Season Friendly" alt="Pre-Season Friendly" onerror="$(this).parent().addClass('missing')">
+                <img class="item_image otherImageMediumImageUrl" src="//manchesterunited.seatgeekenterprise.com/weblink/10026/get.resource/images/2057/1000871.png?etag=C0DDA1121EC13EE93F61F0F0AB997CC7" title="Pre-Season Friendly" alt="Pre-Season Friendly" onerror="$(this).parent().addClass('missing')">
+                </div>
+            </a>
+            <div class="itemsDataContainer">
+                <span class="small_text_d name">
+                    Manchester United v ACF Fiorentina</span>
+                <div class="small_text_a description">
+                    <span id="eventcompetition">Pre-Season Friendly</span><span id="eventhallname">Old Trafford </span></div>
+                
+            </div>
+            <div class="small_text_b extras">
+                    <span class="occupancy soon"></span>
+            </div>
+            <div class="small_text_a dates itemsDateRange">
+                <h2 id="cal">09 Aug</h2><span id="day3">Sat</span><span id="kickoff">12:45</span>
+            </div>
+            
+            <div class="itemsButtonsContainer">
+                
+
+
+<div class="button small_button_a addToBasket" data-origclass="button small_button_a addToBasket" data-disabledclass="disabled">
+    <a onclick="" data-clientclickevent="" id="ctl00$body$EventsListControl_btnAddToBasket_1" data-eventguid="2b031800-9b10-f011-8506-cc4ef2d15c94" tabindex="0" href="/ClientRequiredFallback.aspx?view=Login&amp;next=en-GB%2Fevents%2Fmanchester%2520united%2520v%2520acf%2520fiorentina%2F2025-8-9_12.45%2Fold%2520trafford">
+        Login to Buy Now<img class="small_arrow_1_right" src="style/images/small_arrow_1_right.gif" alt="Next"></a></div>
+
+                
+            </div>
+            <div class="ExtendedData1">With the 2025/26 Premier League season due to kick-off on Saturday 16 August this pre-season friendly is the perfect warm up, and tickets are now on sale to all supporters! Executive Club Members, Season Ticket holders and <a href="https://tickets.manutd.com/memberships" target="_blank">Official Members</a> receive a £5 discount compared to non-Members. The discount is automatically applied in the basket meaning you can secure your seat now from just £25 (from £10 for Under 16s). <br><br>Make more of your matchday and treat yourself to Matchday Hospitality where you can choose from a range of packages offering a variety of food &amp; drink options.<br><br><b>Fiorentina Fans:</b> Please contact your club directly to enquire about purchasing tickets in the away fan area. Away fans cannot purchase tickets in home areas.</div><div class="ExtendedData6"><a class="logged-in" href="https://tickets.manutd.com/en-GB/hospitality/manchester%20united%20v%20acf%20fiorentina%20(pre-season%20friendly)/2025-8-9_12.45/old%20trafford">Buy Hospitality</a></div>
+        </div>
+    
+        
+    
+        <div class="no-results" style="display: none;">No Matching Events</div></div>
+        <div id="ctl00_body_EventsListControl_ItemsListControl_ctl04_pagingContainer" class="pagingContainer"></div>
+        
+    
+
+    
+</div>
+
+</div><div class="screenPartContainer ph_basketwidget" id="PH_BasketWidget" role="region" style="" data-arialandmark="" data-tooltip="Basket pane"><button type="button" class="skipRegion" tabindex="0" aria-label="Basket pane region. Press ENTER for the next region in screen. Press SHIFT+ENTER for the previous region. Press TAB to focus on this region."></button>
+	
+<script type="text/javascript">
+    $(document).bind("basketCommitted.esro", function(ev) {
+        $("#miniBasketFooter").hide();
+    });
+</script>
+<div>
+    <h2>
+        Personal Basket
+    </h2>
+    <div id="miniBasketWrapper">
+    
+<script type="text/javascript">
+    var rsrcBtnClose = "Close";
+    var rsrcBtnOk = "OK";
+    require(['js/products','js/singleProduct','js/validation']);
+</script>
+<a href="Order.aspx" class="editBasket" aria-label="Edit basket"><span>Edit</span></a>
+<div id="basket-reload-wrapper-10206037"><div class="basket-container">
+
+<!-- product items -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- payments -->
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="EndOfBasketItemsPlaceHolders"></div>
+
+
+
+
+
+</div></div>
+<script type="text/javascript">
+
+(function(){
+    var container = $('.basket-container:last');
+    require(['js/basket'], function(basket){
+        basket.init(
+             container,
+             {},
+             null,
+             {},
+             {
+                d: false,
+                r: true,
+                ns: true,
+                sp: 'None',
+                sps: false,
+                isAccordionBasket : true,
+                accordionInitState : 'ExpandAll',
+                grouping: 'AllExceptSigned',
+                cib: false
+             }
+        )
+    });
+})();
+</script>
+    </div>
+    <div class="footer" id="miniBasketFooter">
+        
+<div class="button small_button_a proceed" data-origclass="button small_button_a proceed" data-disabledclass="disabled">
+    <a href="Order.aspx" onclick="" data-clickevent="Order.aspx" data-clientclickevent="" id="ctl00$spw594$ctl00_btnProceed" tabindex="0">
+        To Basket</a></div>
+
+    </div>
+</div>
+</div><div class="screenPartContainer ph_scrolltop" id="PH_ScrollTop" role="region" style="" data-arialandmark="" data-tooltip="Scroll to top"><button type="button" class="skipRegion" tabindex="0" aria-label="Scroll to top region. Press ENTER for the next region in screen. Press SHIFT+ENTER for the previous region. Press TAB to focus on this region."></button>
+	
+
+ <script type="text/javascript">
+     if ($eSRO.documentWidthIsBelowThreshold) {
+         require(["js/ScrollTop"], function(module) {
+             module.init();
+         });
+     }
+ </script>
+
+
+
+</div><div id="group_Footer" role="region" data-arialandmark="" data-tooltip="Footer"><button type="button" class="skipRegion" tabindex="0" aria-label="Footer region. Press ENTER for the next region in screen. Press SHIFT+ENTER for the previous region. Press TAB to focus on this region."></button><div class="screenPartContainer ph_customfooter" id="PH_CustomFooter">
+	<center>
+   <a href="https://www.sportsbreaks.com/Football/Premier-League/Manchester-United?utm_source=MUFC&amp;utm_medium=Referral&amp;utm_campaign=Ticket_and_Hotel" target="_blank" id="travel-supplier" style="display:none;">
+        <img class="desktop" alt="sportsbreaks.com" title="sportsbreaks.com" src="/usercontent/documents/images/footer/Sportsbreaks Updated.png" style="max-width:80vw; margin: 0 2.5vw 20px;">
+        <img class="mobile" alt="sportsbreaks.com" title="sportsbreaks.com" src="/usercontent/documents/images/footer/Sportsbreaks Updated.png" style="width:90%; margin: 0;">
+    </a>
+</center>
+
+<footer class="footer embed">
+        <div class="sponsor">
+            <div class="sponsor__primary">
+                <ul style="outline: none;">
+                            <li data-cardname="footer primary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/adidas" target="_blank" data-partner-name="Adidas" data-partner-text="Official Kit Supplier" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Adidas" title="" src="/usercontent/documents/images/footer/adidas.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer primary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Snapdragon" target="_blank" data-partner-name="Snapdragon" data-partner-text="Principal Partner" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Snapdragon" title="" src="/usercontent/documents/images/footer/Snapdragonred.jpg" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer primary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://tezos.com/manutd/" target="_blank" data-partner-name="Tezos" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Tezos" title="" src="/usercontent/documents/images/footer/TezosLogo_Horizontal_Black_21644483053582.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer primary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://dxc.to/manutd-web" target="_blank" data-partner-name="DXC" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="DXC" title="" src="/usercontent/documents/images/footer/DXC Logo Colour.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                </ul>
+            </div>
+            <div class="sponsor__secondary">
+                <ul>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Apollo-Tyres" target="_blank" data-partner-name="Apollo Tyres" data-partner-text="Official Tyre Partner" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Apollo Tyres" title="" src="/usercontent/documents/images/footer/Apollo_Comp_LightBG_180xAuto1547460405742.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/partners/global/betfred" target="_blank" data-partner-name="Betfred" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Betfred" title="" src="/usercontent/documents/images/footer/Betfred.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/partners/global/cadbury" target="_blank" data-partner-name="Cadbury" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Cadbury" title="" src="/usercontent/documents/images/footer/Cadbury-new-2021-footer-log1609838831293.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Canon-Medical-Systems" target="_blank" data-partner-name="Canon Medical" data-partner-text="Official medical systems partner" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Canon Medical" title="" src="/usercontent/documents/images/footer/Canon-Medical-2000x11251588088643865.jpg" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Casillero-del-Diablo" target="_blank" data-partner-name="Casillero del Diablo" data-partner-text="Official Wine Partner" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Casillero del Diablo" title="" src="/usercontent/documents/images/footer/CDD_Comp_LightBG_180xAuto1547461184438.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <!--<li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Chevrolet" target="_blank" data-partner-name="Chevrolet" data-partner-text="Principal Partner" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Chevrolet" title="" src="/usercontent/documents/images/footer/Chevrolet_Comp_LightBG_180xAuto1547460485843.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Chivas" target="_blank" data-partner-name="Chivas" data-partner-text="Official Spirits Provider" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Chivas" title="" src="/usercontent/documents/images/footer/Chivas_Comp_LightBG_180xAuto1547460586288.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>-->
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/DHL" target="_blank" data-partner-name="DHL" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="DHL" title="" src="/usercontent/documents/images/footer/DHL_Comp_LightBG_180xAuto1547461021282.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Doo-Group" target="_blank" data-partner-name="Doo-Group" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="DHL" title="" src="/usercontent/documents/images/footer/DG-LogoNoSlogan-Vertical-ColorDark.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <!--<li data-cardname="footer primary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Ecolab" target="_blank">
+                                        <img src="/usercontent/documents/images/footer/Ecolab_Footer_Logo1628602152956.png" alt="Ecolab" title="" class=" ">
+                                    <span class=" screenreader">External website</span>
+                                </a>
+                            </li>-->
+                            <li data-cardname="footer primary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Estee-Lauder" target="_blank">
+                                        <img src="/usercontent/documents/images/footer/Estee Lauder.png" alt="Ecolab" title="" class=" ">
+                                    <span class=" screenreader">External website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer primary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Extreme-Networks" target="_blank">
+                                        <img src="/usercontent/documents/images/footer/Extreme Networks.png" alt="Ecolab" title="" class=" ">
+                                    <span class=" screenreader">External website</span>
+                                </a>
+                            </li>
+                            <!--<li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Kohler" target="_blank" data-partner-name="Kohler" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Kohler" title="" src="/usercontent/documents/images/footer/Kohler_Comp_LightBG_180xAuto1547470544622.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>-->
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Konami" target="_blank" data-partner-name="Konami" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Konami" title="" src="/usercontent/documents/images/footer/Konami_PartnerFooter1562073557221.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+							 <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/fr/Partners/Global/malaysia-airlines" target="_blank" data-partner-name="Malaysia-Airlines" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Konami" title="" src="/usercontent/documents/images/footer/MalaysiaAirlines.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Marriott_Bonvoy" target="_blank" data-partner-name="Marriott Hotels" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Marriott Hotels" title="" src="/usercontent/documents/images/footer/MarriottNEW.jpg" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>	
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Melitta" target="_blank" data-partner-name="Melitta" data-partner-text="Official Coffee Partner" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Melitta" title="" src="/usercontent/documents/images/footer/Melitta_Comp_LightBG_180xAuto1547470651869.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Mlily" target="_blank" data-partner-name="Mlily" data-partner-text="Official Global Mattress and Pillow Partner" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Mlily" title="" src="/usercontent/documents/images/footer/LOGO180x56B1550675933086.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Paul-Smith" target="_blank" data-partner-name="Paul Smith" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Mlily" title="" src="/usercontent/documents/images/footer/Paul Smith.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/remington" target="_blank" data-partner-name="Remington" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Remington" title="" src="/usercontent/documents/images/footer/Remington-Logo-OnWhiteBG1549538227044.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+							<li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Tiger%20Beer" target="_blank" data-partner-name="Tiger Beer" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Tiger Beer" title="" src="/usercontent/documents/images/footer/Tiger_MB_Primary_Logo_RGB1729158539594.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>    
+                            </li>
+							<li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/partners/global/therabody" target="_blank" data-partner-name="Therabody" data-partner-text="" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="therabody" title="" src="/usercontent/documents/images/footer/Therabody.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>                 
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.teamviewer.com/en/sponsorship/manutd/" target="_blank" data-partner-name="Teamviewer" data-partner-text="Official Global Partner" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Teamviewer" title="" src="/usercontent/documents/images/footer/TeamViewerNew.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                            <li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Visit-Malta" target="_blank" data-partner-name="Visit Malta" data-partner-text="Official Global Partner" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Visit Malta" title="" src="/usercontent/documents/images/footer/VisitMalta_WhiteBG1568380587328.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+							<li data-cardname="footer secondary sponsor" data-an-track="true" data-track-type="page">
+                                <a href="https://www.manutd.com/en/Partners/Global/Wow-Hydrate" target="_blank" data-partner-name="Wow Hydrate" data-partner-text="Official Global Partner" data-tracksponsor="" data-ol-has-click-handler="">
+                                        <img class="sponsor__dark" onerror="this.className='no-img'" alt="Wow Hydrate" title="" src="/usercontent/documents/images/footer/WOWHYDRATELOGO.png" style="opacity: 1;">
+                                    <span class=" screenreader">External Website</span>
+                                </a>
+                            </li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer__social-links">
+            <div class="social-icons">
+                <ul class="social-media-link"><li><a href="https://www.youtube.com/manutd" target="_blank"><img src="//assets.manutd.com/AssetPicker/images/0/0/16/28/1055984/youtube-icon-40x401639670271302.png" alt="Follow us on YouTube External Website" title="" class=" "></a></li><li><a href="https://www.facebook.com/manchesterunited " target="_blank"><img src="//assets.manutd.com/AssetPicker/images/0/0/15/55/997196/fb_2x1624877204997_img1x.png" alt="Follow us on Facebook External Website" title="" class=" "></a></li><li><a href="https://twitter.com/ManUtd" target="_blank"><img src="//assets.manutd.com/AssetPicker/images/0/0/19/235/1305510/x-icon-32x321710179396341.png" alt="Follow us on Via Twitter External Website" title="" class=" "></a></li><li><a href="http://instagram.com/manchesterunited " target="_blank"><img src="//assets.manutd.com/AssetPicker/images/0/0/15/55/997197/instagram_2x1624877438061_img1x.png" alt="Follow us on Instagram External Website" title="" class=" "></a></li><li><a href="https://www.tiktok.com/@manutd" target="_blank"><img src="//assets.manutd.com/AssetPicker/images/0/0/15/55/997190/tiktok_line1624878954741_img1x.png" alt="Follow us on Tik-Tok External Website" title="" class=" "></a></li><li><a href="https://www.whatsapp.com/channel/0029VaAQ0dF7T8bcL5yjvq1s"><img src="//assets.manutd.com/AssetPicker/images/0/0/19/235/1305509/whatsapp-icon-32x321710179593254.png" alt="Follow us on  External Website" title="" class=" "></a></li><li><a href="https://www.snapchat.com/add/manutd"><img src="//assets.manutd.com/AssetPicker/images/0/0/19/235/1305507/snapchat-icon-32x321710179678240.png" alt="Follow us on  External Website" title="" class=" "></a></li><li><a href="https://www.threads.net/@manchesterunited"><img src="//assets.manutd.com/AssetPicker/images/0/0/19/235/1305508/threads-icon-32x321710179868714.png" alt="Follow us on  External Website" title="" class=" "></a></li></ul>
+            </div>
+        </div>
+
+        <div class="footer__menu">
+            <div class="footer__menu__links">
+                <ul>
+                                <li><a href="https://app.adjust.com/88iacno_eo402dp?campaign=Footer&amp;adgroup=MUOfficialApp&amp;creative=180910MUOfficialAppFooterCTA&amp;fallback=https%3A%2F%2Fwww.manutd.com%2Fofficial-app%3Ft%3Dy%26int_source%3Dmuwebsite%26int_medium%3Dreferral%26int_campaign%3Dmuwebsite%26int_content%3D180910MUOfficialAppFooterCTA" data-an-track="true" data-track-type="link" target="_blank" data-track-text="Download the Official App" data-ol-has-click-handler="">Download the Official App</a></li>
+                                <li><a href="https://www.manutd.com/en/Help/Accessibility" data-an-track="true" data-track-type="link" target="_blank" data-track-text="Accessibility" data-ol-has-click-handler="">Accessibility</a></li>
+                                <li><a href="https://www.manutd.com/en/help/club-contacts?int_source=manutd.com&amp;int_medium=menu&amp;int_campaign=generic&amp;int_content=more_help_contactus" data-an-track="true" data-track-type="link" target="_blank" data-track-text="Contact Us" data-ol-has-click-handler="">Contact Us</a></li>
+                                <li><a href="https://www.manutd.com/en/Club/Jobs" data-an-track="true" data-track-type="link" target="" data-track-text="Jobs &amp; Careers" data-ol-has-click-handler="">Jobs &amp; Careers</a></li>
+                                <li><a href="https://www.manutd.com/en/Help/Privacy-Policy" data-an-track="true" data-track-type="link" target="_blank" data-track-text="Privacy" data-ol-has-click-handler="">Privacy</a></li>
+                                <li><a href="https://www.manutd.com/en/help/cookie-policy" data-an-track="true" data-track-type="link" target="_blank" data-track-text="Cookies" data-ol-has-click-handler="">Cookies</a></li>
+                                <li><a href="https://www.manutd.com/en/help/website-terms-of-use" data-an-track="true" data-track-type="link" target="_blank" data-track-text="Terms Of Use" data-ol-has-click-handler="">Terms Of Use</a></li>
+                                <li><a href="https://www.manutd.com/en/help/terms-and-conditions-of-sale" data-an-track="true" data-track-type="link" target="_blank" data-track-text="Terms &amp; Conditions of Sale" data-ol-has-click-handler="">Terms &amp; Conditions of Sale</a></li>
+                                <li><a href="https://www.manutd.com/en/help/anti-slavery-statement" data-an-track="true" data-track-type="link" target="_blank" data-track-text="Anti-slavery" data-ol-has-click-handler="">Anti-slavery</a></li>
+                                <li><a nohref="" id="CV_START" onclick="CV.cobrowse.start()" data-an-track="true" data-track-type="link" data-track-text="Help" data-ol-has-click-handler="">Co-Browse</a></li>
+                </ul>
+
+            </div>
+            <div class="footer__menu__copyright">
+                <ul>
+                    <li>
+                        ©2024 Manchester United FC Ltd
+                    </li>
+                    <!--<li>Powered by <a class="powered-by-seatgeek" href="https://enterprise.seatgeek.com/uk" target="_blank">SeatGeek</a></li>-->
+                </ul>
+            </div>
+        </div>
+   
+</footer>
+<style type="text/css">
+#CV-question-corner{
+    display: none!important;
+}
+.footer .social-media-link li a {
+	position: relative;
+}
+.footer .social-media-link li a img {
+	max-height: 20px;
+    max-width: 24px;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+}
+</style>
+<script type="text/javascript">
+        var TVscript = document.createElement("script");
+        TVscript.type = "text/javascript";
+        TVscript.src = "https://cdn.engage.teamviewer.com/cdn/js/robvbmg4mp.js";
+        document.getElementsByTagName("head")[0].appendChild(TVscript);
+    
+
+    function initFunction(){
+        var btnStop = document.getElementById("CV_STOP");
+        var btnStart = document.getElementById("CV_START");
+        CV.cobrowse.addCobrowsingStartedListener(function() {
+            btnStart.style.display = "none";
+        });
+        CV.cobrowse.addCobrowsingStoppedListener(function() {
+        btnStart.style.display = "block";
+        });
+    }
+
+    if (!window.CVLoaded) {
+        window.CVLoaded = initFunction;
+    } else {
+        initFunction();
+    }
+</script>  
+
+</div><div class="screenPartContainer ph_social_tools_bar" id="PH_Social_tools_bar" role="region" style="" data-arialandmark="" data-tooltip="Social media toolbar"><button type="button" class="skipRegion" tabindex="0" aria-label="Social media toolbar region. Press ENTER for the next region in screen. Press SHIFT+ENTER for the previous region. Press TAB to focus on this region."></button>
+	
+<script type="text/javascript">
+$(window).on("load", function(){
+    
+});
+</script>
+<div class="socialTools-container">
+
+</div>
+</div></div><div class="screenPartContainer ph_footer" id="PH_Footer" style="top: 947px;">
+	
+<script type="text/javascript">
+    function setFooterInRightPos() {
+
+        var lowestPoint = 0;
+        var footer = $("#footer");
+        var footerScreenPartContainer = $(".screenPartContainer").has(footer);
+        $(".screenPartContainer").not(footerScreenPartContainer).each(
+            function() {
+                var screenPartContainer = $(this);
+                var point = screenPartContainer.position().top + screenPartContainer.height();
+                if (point > lowestPoint)
+                    lowestPoint = point;
+            }
+        );
+
+        footerScreenPartContainer.css("top", lowestPoint);
+        footer.show();
+        
+    }
+
+    $(document).ready(function() {
+        var footer = $("#footer");
+        setFooterInRightPos();
+        $(this).trigger("FooterReady.esro", footer.find(".inner"));
+        if ($(".inner *:visible", footer).length > 0) {
+            footer.addClass("hasContent");
+        } else {
+            footer.removeClass("hasContent");
+        }
+    })
+</script>
+<div id="footer" style="">
+    <!-- footer start -->
+    <div class="inner"></div>
+    <!-- footer end -->
+</div>
+
+</div>
+
+
+<div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div></body>
+</html>
