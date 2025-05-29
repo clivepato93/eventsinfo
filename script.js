@@ -7,6 +7,7 @@ const events = [];
 // use puppeteer stealth for extra protection when scraping
 
 async function info() {
+	let prevEvent = {}
 	const browser = await puppeteer.launch({ headless: "new" });
 	const page = await browser.newPage();
 
@@ -107,22 +108,33 @@ async function info() {
 				const query = / for /.test(events[i].title)
 					? events[i].title.split(" for ")
 					: events[i].title.split(" versus ");
-				console.log(
-					query,
-					`${query[0]} is in the title`,
-					title.includes(`${query[0]}`),
-					`${query[1]} is in the title`,
-					title.includes(`${query[1]}`),
-					title
-				);
+				// console.log(
+				// 	query,
+				// 	`${query[0]} is in the title`,
+				// 	title.includes(`${query[0]}`),
+				// 	`${query[1]} is in the title`,
+				// 	title.includes(`${query[1]}`),
+				// 	title
+				// );
 
+				if(prevEvent.title===undefined){
+					prevEvent={date,title,time,venue,year}
+				}
 				if (
-					title.includes(query[0]) == false &&
-					title.includes(query[1]) == false && events[i].date==date == false &&
+
+				 events[i].date==date == false &&
 					events[i].time==time == false
-				) {
+				) 
+
+				// if (
+
+				//  events[i].date==date == false &&
+				// 	events[i].time==time == false && prevEvent.date !=date && prevEvent.time !=time
+				// ) 
+				{
 					filtered.push({title,date,venue,time,year});
-					break
+										prevEvent={date,title,time,venue,year}
+
 				}
 				
 				
@@ -139,8 +151,8 @@ async function info() {
 
 			// 	}
 			// })
-			console.log('the array is',filtered);
-			if(filtered.length){
+			// console.log('the array is',filtered,"prevEvent is ", prevEvent);
+			if(filtered.length==events.length){
 				events.push({title,date,venue,time,year})
 			}
 			// events.forEach((event) => {
